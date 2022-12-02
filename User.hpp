@@ -22,6 +22,7 @@ protected:
 
 	// what the user is
 	std::string	_Nick;
+	std::string	_RealName;
 	std::string	_Name;
 	std::string _Pass;
 	int			_ModeFlags;
@@ -40,6 +41,8 @@ public:
 	const std::string& GetNick() const;
 	const std::string& GetName() const;
 	const std::string&	GetPass() const;
+	void	SetName(std::string Name);
+	void	SetRealName(std::string RealName);
 	bool GetRegistered() const;
 	int GetUserFlags() const;
 

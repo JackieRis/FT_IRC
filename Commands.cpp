@@ -58,20 +58,29 @@ void Server::cmdCap(const std::vector<std::string>&, int)
 
 void Server::cmdUser(const std::vector<std::string>& input, int fd)
 {
-	//User		*user = _user[fd];
+	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 	
 	/* USER <username> <flags> <> <realname> */
 	if (input.size() < 5)
 	{
 		/* Make this a NumericReply utility */
-		(*io) << 461 << " :Not enough parameters";
+		(*io) << 461 << " :ERR_NEEDMOREPARAMS";
 		io->Send();
 		return ;
 	}
-
-
-	
+	std::map<int, User *>::iterator	it = _user.begin();	/* let's search if there isn't a same name connected */
+	for (; it != _user.end(); ++it)
+	{
+		if (it->second->GetName()== input[1])
+		{
+			(*_io[fd]) << 461 << " :ERR_ALREADYREGISTRED";
+			(*_io[fd]).Send();
+			return ;
+		}
+	}
+	user->SetName(input[1]);
+	user->SetRealName(input[4]);
 }
 
 void Server::cmdNick(const std::vector<std::string>& input, int fd)
