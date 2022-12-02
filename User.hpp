@@ -41,8 +41,9 @@ public:
 	const std::string& GetNick() const;
 	const std::string& GetName() const;
 	const std::string&	GetPass() const;
-	void	SetName(std::string Name);
-	void	SetRealName(std::string RealName);
+	void	SetNick(const std::string &Nick);
+	void	SetName(const std::string &Name);
+	void	SetRealName(const std::string &RealName);
 	bool GetRegistered() const;
 	int GetUserFlags() const;
 

@@ -20,8 +20,9 @@ User::User(std::string Nick, std::string Name): _Nick(Nick), _Name(Name) {}
 
 User::~User() {}
 
-void	User::SetName(std::string Name) {_Name = Name;}
-void	User::SetRealName(std::string RealName) {_RealName = RealName;}
+void	User::SetNick(const std::string &Nick) {_Nick = Nick;}
+void	User::SetName(const std::string &Name) {_Name = Name;}
+void	User::SetRealName(const std::string &RealName) {_RealName = RealName;}
 
 const std::string& User::GetNick() const
 {

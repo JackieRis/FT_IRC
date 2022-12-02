@@ -12,19 +12,6 @@
 
 #include "Server.hpp"
 
-std::vector<std::string>	ft_customSplit(std::string input)
-{
-	std::vector<std::string>	ret;
-	size_t						i = input.find(" ", 0);
-	while (i != std::string::npos)
-	{
-		ret.push_back(input.substr(i, input.find(" ", i + 1)));
-		i = input.find(" ", i + 1);	
-	}
-	//ret.push_back(input.substr(i, input.find(" ", i + 1)));
-	return (ret);
-}
-
 void Server::command(const std::string& str, int fd)
 {
 	const std::vector<std::string> params = Utils::ToParamList(str);
@@ -56,25 +43,25 @@ void Server::cmdCap(const std::vector<std::string>&, int)
 	/* We do not support CAP, silently ignore, don't even bother with ERR_NEEDMOREPARAM*/
 }
 
-void Server::cmdUser(const std::vector<std::string>& input, int fd)
+void Server::cmdUser(const std::vector<std::string>& input, int fd) /* must add check name and realname */
 {
 	User		*user = _user[fd];
-	SocketIo	*io = _io[fd];
+	//SocketIo	*io = _io[fd];
 	
 	/* USER <username> <flags> <> <realname> */
 	if (input.size() < 5)
 	{
 		/* Make this a NumericReply utility */
-		(*io) << 461 << " :ERR_NEEDMOREPARAMS";
-		io->Send();
+		(*_io[fd]) << 461 << " :Not enough parameters";
+		(*_io[fd]).Send();
 		return ;
 	}
 	std::map<int, User *>::iterator	it = _user.begin();	/* let's search if there isn't a same name connected */
 	for (; it != _user.end(); ++it)
 	{
-		if (it->second->GetName()== input[1])
+		if (it->second->GetName() == input[1])
 		{
-			(*_io[fd]) << 461 << " :ERR_ALREADYREGISTRED";
+			(*_io[fd]) << 462 << " :User already exist";
 			(*_io[fd]).Send();
 			return ;
 		}
@@ -83,13 +70,30 @@ void Server::cmdUser(const std::vector<std::string>& input, int fd)
 	user->SetRealName(input[4]);
 }
 
-void Server::cmdNick(const std::vector<std::string>& input, int fd)
+void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must check if function terminated */
 {
-	(void)input;(void)fd;
+	User	*user = _user[fd];
+
+	if (input.size() < 2)
+	{
+		(*_io[fd]) << 431 << " :No nickname given";
+		(*_io[fd]).Send();
+		return ;
+	}
+	std::map<int, User *>::iterator	it = _user.begin();
+	for (; it != _user.end(); ++it)
+	{
+		if (it->second->GetNick() == input[1])
+		{
+			(*_io[fd]) << 433 << " :Nickname already taken";
+			(*_io[fd]).Send();
+			return ;
+		}
+	}
+	user->SetNick(input[1]);
 }
 
-/* CHECK THIS OUT I CHANGED THE INPUT PARAMETER */
-void Server::cmdPass(const std::vector<std::string>& input, int fd)
+void Server::cmdPass(const std::vector<std::string>& input, int fd) /* must add if already registered */
 {
 	if (input.size() < 2)
 	{	
@@ -100,20 +104,12 @@ void Server::cmdPass(const std::vector<std::string>& input, int fd)
 	}
 	if (input[1] == _password)	/* wrong passwordm then user get disconnected */
 	{
-		(*_io[fd]) << 461 << " :Wrong password";
+		(*_io[fd]) << 464 << " :Wrong password";
 		(*_io[fd]).Send();
 		disconnectClient(fd);
 		return ;
 	}
 }
-
-/*
-	if (_users[fd]->GetPass() == input)
-	{
-		// numeric reply 462 ERR_ALREADYREGISTRED
-	}
-	// wrong password = 464 ERR_PASSWORDMISMATCH
-*/
 
 void Server::cmdPing(const std::vector<std::string>& input, int fd)
 {
