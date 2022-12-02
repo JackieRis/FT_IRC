@@ -61,7 +61,7 @@ void	Server::acceptClient()
 			_client_fd[i] = fd;
 			_user.insert(std::make_pair(fd, new User(c.sin_addr.s_addr)));
 			_io.insert(std::make_pair(fd, new SocketIo(fd)));
-			std::cout << "Client successfully connected" << std::endl;
+			std::cout << "Client successfully connected" << std::endl; /*debug message*/
 			return ;
 		}
 	}
@@ -70,11 +70,11 @@ void	Server::acceptClient()
 
 void Server::manageClient(int fd)
 {
-	User		*user;
+//	User		*user;
 	SocketIo	*io;
 	std::string msg;
 
-	user = _user[fd];
+	//user = _user[fd];
 	io = _io[fd];
 
 	std::cout << "\e[38;5;247mFD " << fd << " is sending data\e[0m" << std::endl;

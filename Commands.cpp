@@ -58,7 +58,7 @@ void Server::cmdCap(const std::vector<std::string>&, int)
 
 void Server::cmdUser(const std::vector<std::string>& input, int fd)
 {
-	User		*user = _user[fd];
+	//User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 	
 	/* USER <username> <flags> <> <realname> */
@@ -86,13 +86,16 @@ void Server::cmdPass(const std::vector<std::string>& input, int fd)
 	{	
 		(*_io[fd]) << 461 << " :Not enough parameters";
 		(*_io[fd]).Send();
+		disconnectClient(fd);
 		return ;
 	}
-	if (input[1] == _password)
+	if (input[1] == _password)	/* wrong passwordm then user get disconnected */
 	{
-		;// if pasword ok then ask user + nick
+		(*_io[fd]) << 461 << " :Wrong password";
+		(*_io[fd]).Send();
+		disconnectClient(fd);
+		return ;
 	}
-	(void)input;(void)fd;
 }
 
 /*
@@ -105,9 +108,10 @@ void Server::cmdPass(const std::vector<std::string>& input, int fd)
 
 void Server::cmdPing(const std::vector<std::string>& input, int fd)
 {
-	// std::cout << input;
-	// (*_io[fd]) << input;
-	// (*_io[fd]).Send();
+	//std::cout << input;
+	//(*_io[fd]) << input;
+	//(*_io[fd]).Send();
+	(void)input;(void)fd;
 }
 
 void Server::cmdPong(const std::vector<std::string>& input, int fd)
