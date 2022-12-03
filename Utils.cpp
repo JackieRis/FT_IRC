@@ -45,3 +45,37 @@ std::vector<std::string>	Utils::ToParamList(const std::string& input)
 		res.push_back(tmp);
 	return (res);
 }
+
+std::vector<std::string>	Utils::ToList(const std::string& input)
+{
+	std::vector<std::string>	res;
+	std::string tmp = "";
+	std::string::const_iterator it = input.begin();
+
+	for (; it != input.end(); ++it)
+	{
+		if (*it == ',')
+		{
+			res.push_back(tmp);
+			tmp = "";
+			continue ;
+		}
+		tmp += *it;
+	}
+	if (!tmp.empty())
+		res.push_back(tmp);
+	return (res);
+}
+
+void	Utils::SendList(SocketIo *io, const std::vector<std::string>& lst)
+{
+	std::vector<std::string>::const_iterator it;
+
+	for (it = lst.begin(); it != lst.end(); ++it)
+	{
+		(*io) << 
+		io->Send();
+	}
+	(*io) << 
+	io->Send();
+}

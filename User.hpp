@@ -24,8 +24,8 @@ protected:
 	std::string	_Nick;
 	std::string	_RealName;
 	std::string	_Name;
-	std::string _Pass;
-	int			_ModeFlags;
+	bool		_Pass;
+	int			_Mode;
 	bool		_Registered;
 	
 	// to be moved in a map<> insde Server
@@ -35,19 +35,20 @@ protected:
 public:
 	User();
 	User(in_addr_t ip);
-	User(std::string Nick, std::string _Name);
 	~User();
 
 	const std::string& GetNick() const;
 	const std::string& GetName() const;
-	const std::string&	GetPass() const;
+	bool	GetPass() const;
+	bool	GetRegistered() const;
+	int		GetMode() const;
+
 	void	SetNick(const std::string &Nick);
 	void	SetName(const std::string &Name);
 	void	SetRealName(const std::string &RealName);
-	bool GetRegistered() const;
-	int GetUserFlags() const;
-
-	void SetPass(const std::string& pass);
+	void	SetPass(bool pass);
+	void	SetRegistered(bool Registered);
+	void	SetMode(int mode);
 };
 
 #endif

@@ -95,7 +95,7 @@ void Server::manageClient(int fd)
 		std::cerr << "baguette" << std::endl;
 		return ;
 	}
-	if (io->CanConsume())
+	while (io->CanConsume())
 	{
 		msg = io->Consume();
 		std::cout << "\e[32m(" << fd << ") recv: " << msg << "\e[0m" << std::endl;

@@ -46,6 +46,8 @@ void	Channels::RemoveUser(User *user)
 	// Don't forget to delete the channel from Server if channel.GetSize() == 0
 }
 
+const std::string	Channels::GetChannel() const {return (channelName);}
+
 const std::vector<std::string> Channels::GetUserNickList() const
 {
 	std::vector<std::string> lst;

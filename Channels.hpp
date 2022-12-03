@@ -36,8 +36,9 @@ class Channels
 	void	RemoveUser(User *user);
 
 	// Getters
-	const std::vector<std::string> GetUserNickList() const;
-	const std::vector<std::string> GetUserNameList() const;
+	const std::string				GetChannel() const;
+	const std::vector<std::string>	GetUserNickList() const;
+	const std::vector<std::string>	GetUserNameList() const;
 	int GetSize() const;
 	// GetUserList() ?
 };

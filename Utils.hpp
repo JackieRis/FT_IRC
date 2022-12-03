@@ -15,6 +15,8 @@
 
 # include <vector>
 # include <string>
+# include "SocketIo.hpp"
+# include "Channels.hpp"
 
 class Utils
 {
@@ -28,6 +30,14 @@ public:
 		In this case, discard the input and send an error to the client
 	*/
 	static std::vector<std::string>	ToParamList(const std::string& input);
+
+	/*
+		Converts a comma separates list of names from a string to a vector
+	*/
+	static std::vector<std::string>	ToList(const std::string& input);
+
+
+	static void	SendList(SocketIo *io, const std::vector<std::string>& lst);
 };
 
 # endif

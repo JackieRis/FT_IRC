@@ -76,15 +76,21 @@ protected:
 
 	typedef void (Server::*cmdHandler)(const std::vector<std::string>&, int);
 
+	// Auth
 	void cmdCap(const std::vector<std::string>& input, int fd);
 	void cmdUser(const std::vector<std::string>& input, int fd);
 	void cmdNick(const std::vector<std::string>& input, int fd);
 	void cmdPass(const std::vector<std::string>& input, int fd);
+
+	//  Misc
 	void cmdPing(const std::vector<std::string>& input, int fd);
 	void cmdPong(const std::vector<std::string>& input, int fd);
+	void cmdMode(const std::vector<std::string>& input, int fd);
+
+	// Communication
 	void cmdJoin(const std::vector<std::string>& input, int fd);
 	void cmdPrivmsg(const std::vector<std::string>& input, int fd);
-	void cmdMode(const std::vector<std::string>& input, int fd);
+	
 	// kick ban 
 	
 	std::map<std::string, cmdHandler>	_cmds;
