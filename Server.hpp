@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:47:18 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/11/30 19:13:42 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:09:04 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # define BUFFER_SIZE 4096
 # define MAX_CLIENT 1024
 
+# include <algorithm>
 # include "User.hpp"
 # include "Channels.hpp"
 # include "SocketIo.hpp"
@@ -64,6 +65,9 @@ protected:
 	void acceptClient();
 	void manageClient(int fd);
 	void disconnectClient(int fd);
+	void addChannel(const std::string& cName, User *creator);
+	void removeChannel(std::map<std::string, Channels *>::iterator it);
+	void removeFromChannel(const std::string& cname, User *user);
 	/* Add security function */
 	int	security(int connection);
 

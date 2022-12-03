@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:48:58 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/11/30 02:37:02 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:10:39 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,34 @@ int	Server::security(int connection)
 	int	bytesRead = read(connection, buffer, BUFFER_SIZE); /* last arguments are flags */
 	std::cout << "The message of size " << bytesRead << " was: " << buffer;
 	return (0);
+}
+
+void Server::addChannel(const std::string& cName, User *creator)
+{
+	Channels *chan = new Channels(cName, creator);
+	_channel.insert(std::make_pair(cName, chan));
+}
+
+void Server::removeChannel(std::map<std::string, Channels *>::iterator it)
+{
+	if (it == _channel.end())
+		return ;
+	delete it->second;
+	_channel.erase(it);
+}
+
+void Server::removeFromChannel(const std::string& cName, User *user)
+{
+	std::map<std::string, Channels *>::iterator it = _channel.find(cName);
+
+	if (it == _channel.end())
+		return ;
+
+	Channels *chan = it->second;
+
+	chan->RemoveUser(user);
+	if (chan->GetSize() == 0)
+		removeChannel(it);
 }
 
 void	Server::disconnectClient(int fd)
@@ -59,7 +87,7 @@ void	Server::acceptClient()
 		if (_client_fd[i] == -1)
 		{
 			_client_fd[i] = fd;
-			_user.insert(std::make_pair(fd, new User(c.sin_addr.s_addr)));
+			_user.insert(std::make_pair(fd, new User(c.sin_addr.s_addr, fd)));
 			_io.insert(std::make_pair(fd, new SocketIo(fd)));
 			std::cout << "Client successfully connected" << std::endl; /*debug message*/
 			return ;

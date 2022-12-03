@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channels.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/11/28 00:45:19 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:14:50 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,10 @@ class Channels
 	void	RemoveUser(User *user);
 
 	// Getters
-	const std::string				GetChannel() const;
+	const std::string&				GetName() const;
 	const std::vector<std::string>	GetUserNickList() const;
 	const std::vector<std::string>	GetUserNameList() const;
+	const std::vector<int>			GetUserFd() const;
 	int GetSize() const;
 	// GetUserList() ?
 };

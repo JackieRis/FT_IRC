@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:02:44 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/11/30 03:24:20 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:07:42 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 User::User() {}
 
-User::User(in_addr_t ip) : IpAddress(ip) {}
+User::User(in_addr_t ip, int fd) :  _fd(fd), IpAddress(ip) {}
 
 User::~User() {}
 
@@ -24,6 +24,8 @@ void	User::SetRealName(const std::string &RealName) {_RealName = RealName;}
 void	User::SetPass(bool pass) {_Pass = pass;}
 void	User::SetRegistered(bool Registered) {_Registered = Registered;}
 void	User::SetMode(int mode) {_Mode = mode;}
+
+int		User::GetFd() const {return (_fd);}
 
 const std::string& User::GetNick() const
 {

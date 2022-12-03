@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:13 by aberneli          #+#    #+#             */
-/*   Updated: 2022/11/30 19:04:35 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:18:58 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 class Utils
 {
 public:
+
+
 	/*
 		Converts a client input into a vector of parameters
 		Whenever a ':' character is encountered, the rest of the string is copied into the last argument
@@ -32,12 +34,9 @@ public:
 	static std::vector<std::string>	ToParamList(const std::string& input);
 
 	/*
-		Converts a comma separates list of names from a string to a vector
+		Converts a comma separated list of names from a string to a vector
 	*/
 	static std::vector<std::string>	ToList(const std::string& input);
-
-
-	static void	SendList(SocketIo *io, const std::vector<std::string>& lst);
 };
 
 # endif

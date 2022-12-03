@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tnguyen- <tnguyen-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/01 03:56:33 by tnguyen-         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:17:31 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,11 +133,19 @@ void Server::cmdPong(const std::vector<std::string>& input, int fd)
 	(void)input;(void)fd;
 }
 
+// utilise un autre fichier, ici c'est réservé pour les trucs de la map de pointeur de fonction ouais aller adieu
 void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
-	Channels	*chan;
+	Channels	*chan; /* Get the pointer later since we might have to create the channel on the fly */
+
+	if (!user->GetRegistered())
+	{
+		(*io) << 451 << " :You are not registered";
+		io->Send();
+		return ;
+	}
 
 	if (input.size() < 1)
 	{
@@ -160,71 +168,92 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 	
 	std::vector<std::string>::const_iterator it = lst.begin();
 	std::vector<std::string>::const_iterator keyIt = keyLst.begin();
+	bool creator = false;
 
 	for (; it != lst.end(); ++it)
 	{
 		// check if channel exist or can be created
+		if (_channel.find(*it) == _channel.end())
+		{
+			creator = true;
+			addChannel(*it, user);
+		}
+		chan = _channel[*it];
+		(void)chan;
+		if (!creator)
+		{
+			// check BAD KEY
+			// check BANNED
+			// check INVITE ONLY
+		}
 
-
-		// if successfull
+		// if successful
 		(*io) << ":" << user->GetNick() << " JOIN " << *it;
 		io->Send();
 
 		(*io) << 332 << " " << "TOPIC";
 		io->Send();
 
+		// for each user in list, send RPL_NAMES then RPL_ENDNAMES
+
+		if (creator)
+		{
+			// give op and notify
+		}
+
 		if (keyIt != keyLst.end())
 			++keyIt;
 	}
-
-	// for each channels
-
-	/*
-		If a client’s JOIN command to the server is successful, the server MUST send, in this order:
-
-		A JOIN message with the client as the message <source> and the channel they have joined as the first parameter of the message.
-		:Nickname JOIN CHANNELNAME
-
-		The channel’s topic (with RPL_TOPIC (332) and optionally RPL_TOPICWHOTIME (333)), and no message if the channel does not have a topic.
-		332 TOPIC_TEXT
-
-		A list of users currently joined to the channel (with one or more RPL_NAMREPLY (353) numerics followed by a single RPL_ENDOFNAMES (366) numeric). These RPL_NAMREPLY messages sent by the server MUST include the requesting client that has just joined the channel.
-		535 SYMBOL*@= a_nick
-		535 b_nick
-		535 c_nick
-		...
-		366 CHANNEL_NAME :End of list
-	*/
-
 }
 
 /* Parameters: <target>{,<target>} <text to be sent> */
 void Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 {
-	if (input.size() < 3)
+	SocketIo	*io = _io[fd];
+
+	if (_user[fd]->GetRegistered() == false)
 	{
-		(*_io[fd]) << 412 << " :Not enough parameters";
-		(*_io[fd]).Send();
+		(*io) << 451 << " :You are not registered";
+		(*io).Send();
 		return ;
 	}
-	if (input[1][0] == '#' || input[1][0] == '&') /* if target starts with '#'or '&'then it is a channel */
+	if (input.size() < 3)
+	{
+		(*io) << 412 << " :Not enough parameters";
+		(*io).Send();
+		return ;
+	}
+	if (input[1][0] == '#' || input[1][0] == '&') /* if target starts with '#'or '&' then it is a channel */ //edit because #& can be anywhere in the string
 	{
 		std::map<std::string, Channels *>::iterator	it = _channel.find(input[1]);
 		if (it != _channel.end())
 		{
 			;/* send msg in channel  */
 		}
-		(*_io[fd]) << 404 << " :Channel not found"; /* 404 -> ERR_CANNOTSENDTOCHAN */
-		(*_io[fd]).Send();
+		(*io) << 404 << " :Channel not found"; /* 404 -> ERR_CANNOTSENDTOCHAN */
+		(*io).Send();
 		return ;
 	}
-	std::map<int, User *>::iterator	it = _user.begin();
-	for (; it != _user.end(); ++it)
+	std::vector<std::string>			tmp = Utils::ToList(input[1]);
+	size_t								nUser = tmp.size();
+	std::vector<std::string>::iterator	it = tmp.begin();
+	std::map<int,User *>::iterator		Mit = _user.begin();
+	for (; Mit != _user.end() && nUser != 0; ++Mit)
 	{
-		/* code */
+		it = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
+		if (it != tmp.end())
+		{
+			// if (Mit->second->GetRegistered() == false) // waiting afk functionnality
+			// {
+			// 	(*io) << 301 << " :User disconnected";
+			// 	(*io).Send();
+			// }
+			//send msg
+			(*_io[Mit->first]) << input[2];
+			(*_io[Mit->first]).Send();
+			nUser--;
+		}
 	}
-	
-	(void)input;(void)fd;
 }
 
 void Server::cmdMode(const std::vector<std::string>& input, int fd)

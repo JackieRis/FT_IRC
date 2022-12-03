@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 22:59:27 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/11/30 03:24:13 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:06:10 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ protected:
 	std::string	_Name;
 	bool		_Pass;
 	int			_Mode;
+	int			_fd;
 	bool		_Registered;
 	
 	// to be moved in a map<> insde Server
@@ -34,11 +35,12 @@ protected:
 
 public:
 	User();
-	User(in_addr_t ip);
+	User(in_addr_t ip, int fd);
 	~User();
 
 	const std::string& GetNick() const;
 	const std::string& GetName() const;
+	int		GetFd() const;
 	bool	GetPass() const;
 	bool	GetRegistered() const;
 	int		GetMode() const;

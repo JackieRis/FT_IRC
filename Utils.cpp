@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:43 by aberneli          #+#    #+#             */
-/*   Updated: 2022/11/30 19:11:44 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:10:24 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Utils.hpp"
+
+void	Utils::ChanMsg(Channels *chan, std::string msg, std::map<int,SocketIo *> io)
+{
+	std::set<User *>::iterator	it = user.begin();
+	for (; it != user.end(); ++it)
+	{
+		(*io[it->GetFd()])
+	}
+	
+}
 
 std::vector<std::string>	Utils::ToParamList(const std::string& input)
 {
@@ -65,17 +75,4 @@ std::vector<std::string>	Utils::ToList(const std::string& input)
 	if (!tmp.empty())
 		res.push_back(tmp);
 	return (res);
-}
-
-void	Utils::SendList(SocketIo *io, const std::vector<std::string>& lst)
-{
-	std::vector<std::string>::const_iterator it;
-
-	for (it = lst.begin(); it != lst.end(); ++it)
-	{
-		(*io) << 
-		io->Send();
-	}
-	(*io) << 
-	io->Send();
 }

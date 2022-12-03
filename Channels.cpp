@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channels.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/11/28 00:45:18 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/03 20:18:43 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	Channels::RemoveUser(User *user)
 	// Don't forget to delete the channel from Server if channel.GetSize() == 0
 }
 
-const std::string	Channels::GetChannel() const {return (channelName);}
+const std::string&	Channels::GetName() const {return (channelName);}
 
 const std::vector<std::string> Channels::GetUserNickList() const
 {
