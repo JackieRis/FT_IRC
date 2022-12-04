@@ -20,6 +20,7 @@
 # include "User.hpp"
 # include "Channels.hpp"
 # include "SocketIo.hpp"
+# include "NumericReplies.hpp"
 # include "Utils.hpp"
 # include <string>
 # include <cstdlib>
@@ -58,20 +59,24 @@ protected:
 	int									_client_fd[MAX_CLIENT];
 	std::map<int, User *>				_user;
 	std::map<int, SocketIo *>			_io;
+	std::map<User *, SocketIo *>		_userToIoLookup;
+	std::map<std::string, User *>		_nickToUserLookup;
 	std::map<std::string, Channels *>	_channel;
 	int									_port;
 	std::string							_password;
 
-	void acceptClient();
-	void manageClient(int fd);
-	void disconnectClient(int fd);
-	void addChannel(const std::string& cName, User *creator);
-	void removeChannel(std::map<std::string, Channels *>::iterator it);
-	void removeFromChannel(const std::string& cname, User *user);
+	void	ChanMsg(int fd, std::string msg, Channels* chan);
+	void	acceptClient();
+	void	manageClient(int fd);
+	void	disconnectClient(int fd);
+	void	addChannel(const std::string& cName, User *creator);
+	void	removeChannel(std::map<std::string, Channels *>::iterator it);
+	void	removeFromChannel(const std::string& cname, User *user);
+	void	welcomeUser(int fd);
 	/* Add security function */
-	int	security(int connection);
+	int		security(int connection);
 
-	void command(const std::string& str, int fd);
+	void	command(const std::string& str, int fd);
 
 	/*
 		Command handlers
@@ -81,25 +86,27 @@ protected:
 	typedef void (Server::*cmdHandler)(const std::vector<std::string>&, int);
 
 	// Auth
-	void cmdCap(const std::vector<std::string>& input, int fd);
-	void cmdUser(const std::vector<std::string>& input, int fd);
-	void cmdNick(const std::vector<std::string>& input, int fd);
-	void cmdPass(const std::vector<std::string>& input, int fd);
+	void	cmdCap(const std::vector<std::string>& input, int fd);
+	void	cmdUser(const std::vector<std::string>& input, int fd);
+	void	cmdNick(const std::vector<std::string>& input, int fd);
+	void	cmdPass(const std::vector<std::string>& input, int fd);
 
 	//  Misc
-	void cmdPing(const std::vector<std::string>& input, int fd);
-	void cmdPong(const std::vector<std::string>& input, int fd);
-	void cmdMode(const std::vector<std::string>& input, int fd);
+	void	cmdPing(const std::vector<std::string>& input, int fd);
+	void	cmdPong(const std::vector<std::string>& input, int fd);
+	void	cmdMode(const std::vector<std::string>& input, int fd);
 
 	// Communication
-	void cmdJoin(const std::vector<std::string>& input, int fd);
-	void cmdPrivmsg(const std::vector<std::string>& input, int fd);
+	int		checkChan(std::string name); /* ALED PAS ICI */
+	void	cmdJoin(const std::vector<std::string>& input, int fd);
+	void	cmdPrivmsg(const std::vector<std::string>& input, int fd);
+	void	cmdPart(const std::vector<std::string>& input, int fd);
 	
 	// kick ban 
 	
 	std::map<std::string, cmdHandler>	_cmds;
 
-	void initCmds();
+	void	initCmds();
 	
 public:
 	Server();

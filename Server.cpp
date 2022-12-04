@@ -16,6 +16,20 @@ Server::Server(): _port(8080), _password(""){}
 
 Server::Server(int port, std::string password): _port(port), _password(password){}
 
+void	Server::ChanMsg(int fd, std::string msg, Channels* chan)
+{
+	std::set<User *>				tmp = chan->GetUsers();
+	std::set<User *>::iterator		Sit = tmp.begin();
+	std::map<int, User *>::iterator	it;
+
+	it = _user.find(fd);
+	for (; Sit != tmp.end(); ++Sit)
+	{
+		(*_io[(*Sit)->GetFd()]) << ":" << it->second->GetNick() << " PRIVMSG " << chan->GetName() <<  " " << msg;
+		(*_io[(*Sit)->GetFd()]).Send();
+	}
+}
+
 int	Server::security(int connection)
 {
 	/* Read from the connection */
@@ -23,6 +37,19 @@ int	Server::security(int connection)
 	int	bytesRead = read(connection, buffer, BUFFER_SIZE); /* last arguments are flags */
 	std::cout << "The message of size " << bytesRead << " was: " << buffer;
 	return (0);
+}
+
+void Server::welcomeUser(int fd)
+{
+	SocketIo	*io = _io[fd];
+	User		*user = _user[fd];
+
+	user->SetRegistered(true);
+	Rep::R001(*io, user->GetNick());
+	Rep::R002(*io, user->GetNick());
+	Rep::R003(*io, user->GetNick(), "12/04/2022 13:30");
+	Rep::R004(*io, user->GetNick());
+	_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
 }
 
 void Server::addChannel(const std::string& cName, User *creator)
@@ -59,9 +86,19 @@ void	Server::disconnectClient(int fd)
 	{
 		if (_client_fd[i] == fd)
 		{
+			User		*user = _user[fd];
+			SocketIo	*io = _io[fd];
 			// loop through all channels to notify them of this user's disconnection
+
+			if (user->GetRegistered())
+				_nickToUserLookup.erase(user->GetNick());
+			_userToIoLookup.erase(user);
 			_io.erase(fd);
 			_user.erase(fd);
+
+			delete io;
+			delete user;
+
 			close(fd);
 			_client_fd[i] = -1;
 			return ;
@@ -89,6 +126,7 @@ void	Server::acceptClient()
 			_client_fd[i] = fd;
 			_user.insert(std::make_pair(fd, new User(c.sin_addr.s_addr, fd)));
 			_io.insert(std::make_pair(fd, new SocketIo(fd)));
+			_userToIoLookup.insert(std::make_pair(_user[fd], _io[fd]));
 			std::cout << "Client successfully connected" << std::endl; /*debug message*/
 			return ;
 		}
@@ -217,8 +255,10 @@ void Server::run()
 
 void Server::shutdown()
 {
-	// destroy all channels
-
+	for (std::map<std::string, Channels *>::iterator it = _channel.begin(); it != _channel.end(); ++it)
+	{
+		delete (it->second);
+	}
 	for (std::map<int, User *>::iterator it = _user.begin(); it != _user.end(); ++it)
 	{
 		delete (it->second);
@@ -228,7 +268,10 @@ void Server::shutdown()
 		delete (it->second);
 	}
 	
-	/* First we close all client and then we close server */
+	/*
+		First we close all client and then we close server
+		This effectively kicks everyone without warning
+	*/
 	for (int i = 1; i < MAX_CLIENT; i++)
 	{
 		if (_client_fd[i] >= 0)
@@ -237,4 +280,7 @@ void Server::shutdown()
 	close(_client_fd[0]);
 }
 
-Server::~Server() {}
+Server::~Server()
+{
+
+}

@@ -23,6 +23,8 @@ class Channels
 {
 	protected:
 	std::string channelName;
+	std::string topic;
+
 	std::set<User *> users;
 	std::vector<User *> opped;
 	std::vector<User *> banned;
@@ -34,12 +36,17 @@ class Channels
 	~Channels();
 
 	void	RemoveUser(User *user);
+	void	AddUser(User *user);
+
+	void	SetTopic(const std::string& t);
 
 	// Getters
+	const std::set<User *>			&GetUsers() const;
 	const std::string&				GetName() const;
 	const std::vector<std::string>	GetUserNickList() const;
 	const std::vector<std::string>	GetUserNameList() const;
-	const std::vector<int>			GetUserFd() const;
+	//const std::vector<int>			GetUserFd() const;
+	const std::string&				GetTopic() const;
 	int GetSize() const;
 	// GetUserList() ?
 };

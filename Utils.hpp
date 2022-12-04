@@ -22,7 +22,6 @@ class Utils
 {
 public:
 
-
 	/*
 		Converts a client input into a vector of parameters
 		Whenever a ':' character is encountered, the rest of the string is copied into the last argument

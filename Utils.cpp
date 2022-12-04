@@ -12,15 +12,17 @@
 
 #include "Utils.hpp"
 
-void	Utils::ChanMsg(Channels *chan, std::string msg, std::map<int,SocketIo *> io)
-{
-	std::set<User *>::iterator	it = user.begin();
-	for (; it != user.end(); ++it)
-	{
-		(*io[it->GetFd()])
-	}
-	
-}
+// void	Utils::ChanMsg(Channels *chan, std::string msg, std::map<int,SocketIo *> io, User& Sender)
+// {
+// 	std::set<User *>	tmp = chan->GetUsers();
+// 	std::set<User *>::iterator	it = tmp.begin();
+
+// 	for (; it != tmp.end(); ++it)
+// 	{
+// 		(*io[(*it)->GetFd()]) << ":" << /* userNICK */ << " PRIVMSG " << chan->GetName() <<  " " << msg;
+// 		(*io[(*it)->GetFd()]).Send();
+// 	}
+// }
 
 std::vector<std::string>	Utils::ToParamList(const std::string& input)
 {

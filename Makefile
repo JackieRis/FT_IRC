@@ -10,9 +10,9 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRC := main.cpp Server.cpp User.cpp Channels.cpp SocketIo.cpp Commands.cpp Utils.cpp
+SRC := main.cpp Server.cpp User.cpp Channels.cpp SocketIo.cpp Commands.cpp Utils.cpp NumericReplies.cpp
 OBJ = $(SRC:.cpp=.o)
-HEADER = Irc.hpp Server.hpp User.hpp Channels.hpp SocketIo.hpp Utils.hpp
+HEADER = Irc.hpp Server.hpp User.hpp Channels.hpp SocketIo.hpp Utils.hpp NumericReplies.hpp
 
 NAME = ircserv
 

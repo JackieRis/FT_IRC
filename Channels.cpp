@@ -46,6 +46,14 @@ void	Channels::RemoveUser(User *user)
 	// Don't forget to delete the channel from Server if channel.GetSize() == 0
 }
 
+void	Channels::AddUser(User *user)
+{
+	users.insert(user);
+}
+
+void	Channels::SetTopic(const std::string& t) {topic = t;}
+
+const std::set<User *>	&Channels::GetUsers() const {return(users);}
 const std::string&	Channels::GetName() const {return (channelName);}
 
 const std::vector<std::string> Channels::GetUserNickList() const
@@ -70,6 +78,22 @@ const std::vector<std::string> Channels::GetUserNameList() const
 		lst.push_back((*it)->GetName());
 	}
 	return (lst);
+}
+
+// const std::vector<int>	Channels::GetUserFd() const
+// {
+// 	std::vector<int>			ret;
+// 	std::set<User *>::iterator	Sit = users.begin();
+// 	for (; Sit != users.end(); ++Sit)
+// 	{
+// 		ret.push_back()
+// 	}
+	
+// }
+
+const std::string&	Channels::GetTopic() const
+{
+	return (topic);
 }
 
 int Channels::GetSize() const

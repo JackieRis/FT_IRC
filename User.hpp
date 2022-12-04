@@ -28,6 +28,8 @@ protected:
 	int			_Mode;
 	int			_fd;
 	bool		_Registered;
+	bool		_DidUser;
+	bool		_DidNick;
 	
 	// to be moved in a map<> insde Server
 	in_addr_t	IpAddress;
@@ -44,6 +46,8 @@ public:
 	bool	GetPass() const;
 	bool	GetRegistered() const;
 	int		GetMode() const;
+	bool	GetDidUser() const;
+	bool	GetDidNick() const;
 
 	void	SetNick(const std::string &Nick);
 	void	SetName(const std::string &Name);
@@ -51,6 +55,8 @@ public:
 	void	SetPass(bool pass);
 	void	SetRegistered(bool Registered);
 	void	SetMode(int mode);
+	void	SetDidUser(bool b);
+	void	SetDidNick(bool b);
 };
 
 #endif

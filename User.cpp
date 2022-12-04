@@ -24,6 +24,8 @@ void	User::SetRealName(const std::string &RealName) {_RealName = RealName;}
 void	User::SetPass(bool pass) {_Pass = pass;}
 void	User::SetRegistered(bool Registered) {_Registered = Registered;}
 void	User::SetMode(int mode) {_Mode = mode;}
+void	User::SetDidUser(bool b) {_DidUser = b;}
+void	User::SetDidNick(bool b) {_DidNick = b;}
 
 int		User::GetFd() const {return (_fd);}
 
@@ -50,4 +52,14 @@ bool User::GetRegistered() const
 int User::GetMode() const
 {
 	return (_Mode);
+}
+
+bool User::GetDidUser() const
+{
+	return (_DidUser);
+}
+
+bool User::GetDidNick() const
+{
+	return (_DidNick);
 }
