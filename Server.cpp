@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:48:58 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/05 16:36:26 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/05 16:39:40 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ void Server::manageClient(int fd)
 	SocketIo	*io;
 	std::string msg;
 
-	//user = _user[fd];
+	user = _user[fd];
 	io = _io[fd];
 
 	std::cout << "\e[38;5;247mFD " << fd << " is sending data\e[0m" << std::endl;
@@ -168,7 +168,7 @@ void Server::manageClient(int fd)
 	catch (SocketIo::EConnectionClosed& e)
 	{
 		std::cerr << "Remote client disconnected" << std::endl;
-		QuitUserFromServer(_user[fd], ":Connection lost");
+		QuitUserFromServer(user, ":Connection lost");
 		disconnectClient(fd);
 		return ;
 	}
@@ -183,7 +183,7 @@ void Server::manageClient(int fd)
 		std::cout << "\e[32m(" << fd << ") recv: " << msg << "\e[0m" << std::endl;
 
 		command(msg, fd);
-		if (_user[fd]->HasDisconnected())
+		if (user->HasDisconnected())
 		{
 			disconnectClient(fd);
 			break ;
