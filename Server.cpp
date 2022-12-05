@@ -52,6 +52,22 @@ void Server::welcomeUser(int fd)
 	_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
 }
 
+void Server::removeAllChannels(bool emptyOnly)
+{
+	std::map<std::string, Channels *>::iterator it;
+
+	for (it = _channel.begin(); it != _channel.end(); )
+	{
+		if (!emptyOnly || (emptyOnly && it->second->GetSize()))
+		{
+			delete it->second;
+			_channel.erase(it++);
+		}
+		else
+			++it;
+	}
+}
+
 void Server::addChannel(const std::string& cName, User *creator)
 {
 	Channels *chan = new Channels(cName, creator);
@@ -255,10 +271,8 @@ void Server::run()
 
 void Server::shutdown()
 {
-	for (std::map<std::string, Channels *>::iterator it = _channel.begin(); it != _channel.end(); ++it)
-	{
-		delete (it->second);
-	}
+	removeAllChannels(false);
+
 	for (std::map<int, User *>::iterator it = _user.begin(); it != _user.end(); ++it)
 	{
 		delete (it->second);

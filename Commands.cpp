@@ -59,7 +59,7 @@ void Server::cmdUser(const std::vector<std::string>& input, int fd) /* must add 
 	if (input.size() < 5)
 	{
 		/* Make this a NumericReply utility */
-		Rep::E461(*io, user->GetNick(), input[0]); /* check if string is correct */
+		Rep::E461(NR_IN, input[0]); /* check if string is correct */
 		return ;
 	}
 	user->SetName(input[1]);
@@ -83,7 +83,7 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 
 	if (input.size() < 2)
 	{
-		Rep::E431(*io, user->GetNick());
+		Rep::E431(NR_IN);
 		return ;
 	}
 	std::map<int, User *>::iterator	it = _user.begin();
@@ -91,7 +91,7 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 	{
 		if (it->second->GetNick() == input[1])
 		{
-			Rep::E433(*io, user->GetNick(), input[1]);
+			Rep::E433(NR_IN, input[1]);
 			return ;
 		}
 	}
@@ -130,7 +130,19 @@ void Server::cmdPass(const std::vector<std::string>& input, int fd) /* must add 
 
 void Server::cmdPing(const std::vector<std::string>& input, int fd)
 {
+	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
+
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+	if (input.size() < 2)
+	{
+		//idk what to put
+		return ;
+	}
 
 	(*io) << "PONG " << input[1];
 	io->Send();
@@ -138,10 +150,11 @@ void Server::cmdPing(const std::vector<std::string>& input, int fd)
 
 void Server::cmdPong(const std::vector<std::string>& input, int fd)
 {
-	(void)input;(void)fd;
+	SocketIo	*io = _io[fd];
+
+	(*io) << input[1];
 }
 
-// utilise un autre fichier, ici c'est réservé pour les trucs de la map de pointeur de fonction ouais aller adieu
 void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
@@ -150,19 +163,20 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 
 	if (!user->GetRegistered())
 	{
-		Rep::E451(*io, user->GetNick());
+		Rep::E451(NR_IN);
 		return ;
 	}
 
 	if (input.size() < 1)
 	{
-		Rep::E461(*io, user->GetNick(), input[0]);
+		Rep::E461(NR_IN, input[0]);
 		return ;
 	}
 
 	if (input[1] == "0")
 	{
-		// PART all channels
+		PartUserFromAllChannel(user, std::string(":Leaving all channels"));
+		removeAllChannels(true);
 		return ;
 	}
 
@@ -209,8 +223,8 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		
 		/* Send channel user list as nicks */
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
-			Rep::R353(*io, chan->GetName(), user->GetNick(), (*uit)->GetNick());
-		Rep::R366(*io, chan->GetName(), user->GetNick());
+			Rep::R353(NR_IN, user->GetNick(), (*uit)->GetNick());
+		Rep::R366(NR_IN, user->GetNick());
 
 		if (creator)
 		{
@@ -302,6 +316,56 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 	}
 }
 
+/* Same functionalities than PRIVMSG but server or client can't send auto replies and server can't send errors */
+
+/* /NOTICE <msgTarget>, <text> */
+void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
+{
+	std::vector<std::string>	tmp = Utils::ToList(input[1]);
+	std::vector<std::string>::iterator	it = tmp.begin();
+
+	if (input.size() < 3)
+		return ;
+	int	i = checkChan(input[1]);
+	switch (i)
+	{
+	case 3:
+		;//idk
+	case 2:
+		;//ops
+	case 1:
+		{
+			std::map<std::string, Channels *>::iterator	Sit = _channel.find(input[1]);
+			if (Sit != _channel.end())
+			{
+				ChanMsg(fd, input[2], Sit->second);
+				return ;
+			}
+			break ;
+		}
+	case -1:
+		return ;
+
+	default:
+		{
+			size_t								nUser = tmp.size();
+			std::map<int,User *>::iterator		Mit = _user.begin();
+
+			for (; Mit != _user.end() && nUser != 0; ++Mit)
+			{
+				it = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
+				if (it != tmp.end())
+				{
+					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
+					(*_io[Mit->first]).Send();
+					nUser--;
+				}
+			}
+			break;
+		}
+	}
+}
+
 void Server::cmdMode(const std::vector<std::string>& input, int fd)
 {
 	(void)input;(void)fd;
@@ -311,17 +375,17 @@ void Server::cmdPart(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
-	Channels	*chan; /* Get the pointer later since we might have to create the channel on the fly */
+	Channels	*chan; /* Get the pointer later */
 
 	if (!user->GetRegistered())
 	{
-		Rep::E451(*io, user->GetNick());
+		Rep::E451(NR_IN);
 		return ;
 	}
 
 	if (input.size() < 1)
 	{
-		Rep::E461(*io, user->GetNick(), input[0]);
+		Rep::E461(NR_IN, input[0]);
 		return ;
 	}
 
@@ -332,15 +396,20 @@ void Server::cmdPart(const std::vector<std::string>& input, int fd)
 	{
 		if (_channel.find(*it) == _channel.end())
 		{
-			Rep::E403(*io, user->GetNick(), *it);
+			Rep::E403(NR_IN, *it);
 			continue ;
 		}
 		chan = _channel[*it];
 
-		// ERR_NOTONCHANNEL 442
-
+		if (!chan->HasUser(user))
+		{
+			Rep::E442(NR_IN, chan->GetName());
+			continue ;
+		}
+		/* send an empty message if there is no PART message */
+		PartUserFromChannel(user, chan, (input.size() < 3) ? std::string(":") : input[2]);
 	}
-
+	removeAllChannels(true);
 }
 
 /* 

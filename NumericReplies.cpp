@@ -28,19 +28,19 @@ void Rep::R004(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
-void Rep::R332(SocketIo& io, const std::string& chanName, const std::string& cNick, const std::string& topic)
+void Rep::R332(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& topic)
 {
 	io << "332 " << cNick << " " << chanName << " :" << topic;
 	io.Send();
 }
 
-void Rep::R353(SocketIo& io, const std::string& chanName, const std::string& cNick, const std::string& nick)
+void Rep::R353(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& nick)
 {
 	io << "353 " << cNick << " = " << chanName << " :" << nick;
 	io.Send();
 }
 
-void Rep::R366(SocketIo& io, const std::string& chanName, const std::string& cNick)
+void Rep::R366(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
 	io << "366 " << cNick << " " << chanName << " :End of NAMES list";
 	io.Send();
@@ -86,6 +86,24 @@ void Rep::E432(SocketIo& io, const std::string& cNick, const std::string& badNic
 void Rep::E433(SocketIo& io, const std::string& cNick, const std::string& badNick)
 {
 	io << "433 " << cNick << " " << badNick << " :Nickname is already in use";
+	io.Send();
+}
+
+void Rep::E441(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& inputNick)
+{
+	io << "441 " << cNick << " " << inputNick << " " << chanName << " :They aren't on that channel";
+	io.Send();
+}
+
+void Rep::E442(SocketIo& io, const std::string& cNick, const std::string& chanName)
+{
+	io << "442 " << cNick << " " << chanName << " :You're not on that channel";
+	io.Send();
+}
+
+void Rep::E443(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& inputNick)
+{
+	io << "443 " << cNick << " " << inputNick << " " << chanName << " :Is already on channel";
 	io.Send();
 }
 

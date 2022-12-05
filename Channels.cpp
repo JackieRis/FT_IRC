@@ -80,6 +80,11 @@ const std::vector<std::string> Channels::GetUserNameList() const
 	return (lst);
 }
 
+bool	Channels::HasUser(User *user) const
+{
+	return (users.find(user) != users.end());
+}
+
 // const std::vector<int>	Channels::GetUserFd() const
 // {
 // 	std::vector<int>			ret;

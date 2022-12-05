@@ -45,6 +45,7 @@ class Channels
 	const std::string&				GetName() const;
 	const std::vector<std::string>	GetUserNickList() const;
 	const std::vector<std::string>	GetUserNameList() const;
+	bool							HasUser(User *user) const;
 	//const std::vector<int>			GetUserFd() const;
 	const std::string&				GetTopic() const;
 	int GetSize() const;
