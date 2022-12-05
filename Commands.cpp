@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/03 20:17:31 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/05 16:35:50 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,28 +104,47 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 
 void Server::cmdPass(const std::vector<std::string>& input, int fd) /* must add if already registered */
 {
+	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
-
+	
 	if (_user[fd]->GetRegistered() == true)
 	{
-		Rep::E462(*io, _user[fd]->GetNick());
+		Rep::E462(NR_IN);
 		return ;
 	}
 	if (input.size() < 2)
 	{	
-		Rep::E461(*io, _user[fd]->GetNick(), input[0]);
+		Rep::E461(NR_IN, input[0]);
 		disconnectClient(fd);
 		return ;
 	}
 
 	if (input[1] != _password)	/* wrong password, then user get disconnected */
 	{
-		Rep::E464(*io, _user[fd]->GetNick());
+		Rep::E464(NR_IN);
 		disconnectClient(fd);
 		return ;
 	}
 
 	_user[fd]->SetPass(true);
+}
+
+void Server::cmdQuit(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+
+	std::string quitMsg = ":Quit: ";
+
+	if (input.size() >= 2) /* we need the text without the : as we have our own space in the quit message */
+		quitMsg += input[1].substr((input[1][0] == ':'));
+
+	QuitUserFromServer(user, quitMsg);
+
+	(*io) << ":" << user->GetNick() << " ERROR :answer to QUIT";
+	io->Send();
+
+	user->SetHasDisconnected();
 }
 
 void Server::cmdPing(const std::vector<std::string>& input, int fd)
@@ -421,6 +440,7 @@ void Server::initCmds()
 	_cmds.insert(std::make_pair(std::string("USER"), &Server::cmdUser));
 	_cmds.insert(std::make_pair(std::string("NICK"), &Server::cmdNick));
 	_cmds.insert(std::make_pair(std::string("PASS"), &Server::cmdPass));
+	_cmds.insert(std::make_pair(std::string("QUIT"), &Server::cmdQuit));
 	_cmds.insert(std::make_pair(std::string("PING"), &Server::cmdPing));
 	_cmds.insert(std::make_pair(std::string("PONG"), &Server::cmdPong));
 	_cmds.insert(std::make_pair(std::string("JOIN"), &Server::cmdJoin));

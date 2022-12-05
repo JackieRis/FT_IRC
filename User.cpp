@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:02:44 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/03 20:07:42 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/05 16:35:38 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	User::SetRegistered(bool Registered) {_Registered = Registered;}
 void	User::SetMode(int mode) {_Mode = mode;}
 void	User::SetDidUser(bool b) {_DidUser = b;}
 void	User::SetDidNick(bool b) {_DidNick = b;}
+void	User::SetHasDisconnected() {_HasDisconnected = true;}
 
 int		User::GetFd() const {return (_fd);}
 
@@ -62,4 +63,9 @@ bool User::GetDidUser() const
 bool User::GetDidNick() const
 {
 	return (_DidNick);
+}
+
+bool	User::HasDisconnected() const
+{
+	return (_HasDisconnected);
 }

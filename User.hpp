@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 22:59:27 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/03 20:06:10 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/05 16:34:55 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ protected:
 	bool		_Registered;
 	bool		_DidUser;
 	bool		_DidNick;
+	bool		_HasDisconnected;
 	
 	// to be moved in a map<> insde Server
 	in_addr_t	IpAddress;
@@ -48,6 +49,7 @@ public:
 	int		GetMode() const;
 	bool	GetDidUser() const;
 	bool	GetDidNick() const;
+	bool	HasDisconnected() const;
 
 	void	SetNick(const std::string &Nick);
 	void	SetName(const std::string &Name);
@@ -57,6 +59,7 @@ public:
 	void	SetMode(int mode);
 	void	SetDidUser(bool b);
 	void	SetDidNick(bool b);
+	void	SetHasDisconnected();
 };
 
 #endif

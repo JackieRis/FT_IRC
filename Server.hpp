@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:47:18 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/03 20:09:04 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/05 16:01:59 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ protected:
 	typedef void (Server::*cmdHandler)(const std::vector<std::string>&, int);
 	std::map<std::string, cmdHandler>	_cmds;
 
-	/*** Server.cpp ***/
+	/** Server.cpp **/
 	void	ChanMsg(int fd, std::string msg, Channels* chan);
 	void	acceptClient();
 	void	manageClient(int fd);
@@ -75,6 +75,7 @@ protected:
 	void	cmdUser(const std::vector<std::string>& input, int fd);
 	void	cmdNick(const std::vector<std::string>& input, int fd);
 	void	cmdPass(const std::vector<std::string>& input, int fd);
+	void	cmdQuit(const std::vector<std::string>& input, int fd);
 
 	//  Misc
 	void	cmdPing(const std::vector<std::string>& input, int fd);
@@ -91,8 +92,9 @@ protected:
 	void	initCmds();
 
 	/** CommandsExt.cpp **/
-	void PartUserFromAllChannel(User *user, const std::string& msg);
-	void PartUserFromChannel(User *user, Channels *chan, const std::string& msg);
+	void	QuitUserFromServer(User *user, const std::string& reason);
+	void	PartUserFromAllChannel(User *user, const std::string& msg);
+	void	PartUserFromChannel(User *user, Channels *chan, const std::string& msg);
 	
 
 public:

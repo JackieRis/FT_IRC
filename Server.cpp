@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:48:58 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/03 20:10:39 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/05 16:36:26 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,13 +168,13 @@ void Server::manageClient(int fd)
 	catch (SocketIo::EConnectionClosed& e)
 	{
 		std::cerr << "Remote client disconnected" << std::endl;
+		QuitUserFromServer(_user[fd], ":Connection lost");
 		disconnectClient(fd);
 		return ;
 	}
 	catch (SocketIo::ERecvError& e)
 	{
 		std::cerr << e.what() << std::endl;
-		std::cerr << "baguette" << std::endl;
 		return ;
 	}
 	while (io->CanConsume())
@@ -183,6 +183,11 @@ void Server::manageClient(int fd)
 		std::cout << "\e[32m(" << fd << ") recv: " << msg << "\e[0m" << std::endl;
 
 		command(msg, fd);
+		if (_user[fd]->HasDisconnected())
+		{
+			disconnectClient(fd);
+			break ;
+		}
 	}
 }
 
