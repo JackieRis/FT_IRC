@@ -26,6 +26,7 @@
 # include <cstdlib>
 # include <sys/socket.h> // For socket functions
 # include <sys/select.h> // for select functions
+# include <sys/types.h>
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <netinet/in.h> // For sockaddr_in
@@ -81,6 +82,7 @@ protected:
 	void	cmdPing(const std::vector<std::string>& input, int fd);
 	void	cmdPong(const std::vector<std::string>& input, int fd);
 	void	cmdMode(const std::vector<std::string>& input, int fd);
+	void	cmdTopic(const std::vector<std::string>& input, int fd);
 
 	// Communication
 	int		checkChan(std::string name); /* ALED PAS ICI */

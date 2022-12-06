@@ -28,9 +28,21 @@ void Rep::R004(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
+void Rep::R331(SocketIo& io, const std::string& cNick, const std::string& chanName)
+{
+	io << "331 " << cNick << " " << chanName << " :No topic set";
+	io.Send();
+}
+
 void Rep::R332(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& topic)
 {
 	io << "332 " << cNick << " " << chanName << " :" << topic;
+	io.Send();
+}
+
+void Rep::R333(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& setterNick, uint64_t timestamp)
+{
+	io << "333 " << cNick << " " << chanName << " " << setterNick << " " << timestamp;
 	io.Send();
 }
 

@@ -231,12 +231,14 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
 		{
-			(*(_userToIoLookup[*uit])) << ":" << user->GetNick() << " JOIN " << chan->GetName();
-			(_userToIoLookup[*uit])->Send();
+			SocketIo	*chanUserIo = _userToIoLookup[*uit];
+			(*chanUserIo) << ":" << user->GetNick() << " JOIN " << chan->GetName();
+			chanUserIo->Send();
 		}
 
-		/* Send Topic */
-		Rep::R332(NR_IN, chan->GetName(), chan->GetTopic());
+		/* Send Topic if not empty */
+		if (!chan->GetTopic().empty())
+			Rep::R332(NR_IN, chan->GetName(), chan->GetTopic());
 		
 		/* Send channel user list as nicks */
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
@@ -388,6 +390,56 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 	(void)input;(void)fd;
 }
 
+void Server::cmdTopic(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+	Channels	*chan; /* Get the pointer later */
+
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+
+	if (input.size() < 2)
+	{
+		Rep::E461(NR_IN, input[0]);
+		return ;
+	}
+
+	if (_channel.find(input[1]) == _channel.end())
+	{
+		Rep::E403(NR_IN, input[1]);
+		return ;
+	}
+
+	chan = _channel[input[1]];
+
+	if (!chan->HasUser(user))
+	{
+		Rep::E442(NR_IN, chan->GetName());
+		return ;
+	}
+
+	/* Topic Query */
+	if (input.size() == 2)
+	{
+		if (chan->GetTopic().empty())
+			Rep::R331(NR_IN, chan->GetName());
+		else
+		{
+			Rep::R332(NR_IN, chan->GetName(), chan->GetTopic());
+			Rep::R333(NR_IN, chan->GetName(), chan->GetLastTopicEditor(), chan->GetLastTopicChangeDate());
+		}
+		return ;
+	}
+
+	/* Topic Change */
+
+	/* check input, replace string, notify every channel users */
+}
+
 void Server::cmdPart(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
@@ -444,5 +496,6 @@ void Server::initCmds()
 	_cmds.insert(std::make_pair(std::string("JOIN"), &Server::cmdJoin));
 	_cmds.insert(std::make_pair(std::string("PRIVMSG"), &Server::cmdPrivmsg));
 	_cmds.insert(std::make_pair(std::string("MODE"), &Server::cmdMode));
+	_cmds.insert(std::make_pair(std::string("TOPIC"), &Server::cmdTopic));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));
 }

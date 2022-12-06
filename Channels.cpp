@@ -51,7 +51,7 @@ void	Channels::AddUser(User *user)
 	users.insert(user);
 }
 
-void	Channels::SetTopic(const std::string& t) {topic = t;}
+void	Channels::SetTopic(const std::string& t, const std::string& author) {topic = t; lastTopicEditor = author;}
 
 const std::set<User *>	&Channels::GetUsers() const {return(users);}
 const std::string&	Channels::GetName() const {return (channelName);}
@@ -99,6 +99,16 @@ bool	Channels::HasUser(User *user) const
 const std::string&	Channels::GetTopic() const
 {
 	return (topic);
+}
+
+const std::string&	Channels::GetLastTopicEditor() const
+{
+	return (lastTopicEditor);
+}
+
+uint64_t 			Channels::GetLastTopicChangeDate() const
+{
+	return (lastTopicChangeDate);
 }
 
 int Channels::GetSize() const

@@ -14,16 +14,18 @@
 # define CHANNELS_HPP
 
 # include <string>
-# include <map>
 # include <vector>
 # include <set>
 # include "User.hpp"
+# include <sys/types.h>
 
 class Channels
 {
 	protected:
 	std::string channelName;
 	std::string topic;
+	std::string lastTopicEditor;
+	uint64_t	lastTopicChangeDate;
 
 	std::set<User *> users;
 	std::vector<User *> opped;
@@ -38,7 +40,7 @@ class Channels
 	void	RemoveUser(User *user);
 	void	AddUser(User *user);
 
-	void	SetTopic(const std::string& t);
+	void	SetTopic(const std::string& t, const std::string& author);
 
 	// Getters
 	const std::set<User *>			&GetUsers() const;
@@ -48,6 +50,8 @@ class Channels
 	bool							HasUser(User *user) const;
 	//const std::vector<int>			GetUserFd() const;
 	const std::string&				GetTopic() const;
+	const std::string&				GetLastTopicEditor() const;
+	uint64_t						GetLastTopicChangeDate() const;
 	int GetSize() const;
 	// GetUserList() ?
 };
