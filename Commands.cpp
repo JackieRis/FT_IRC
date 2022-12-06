@@ -115,14 +115,14 @@ void Server::cmdPass(const std::vector<std::string>& input, int fd) /* must add 
 	if (input.size() < 2)
 	{	
 		Rep::E461(NR_IN, input[0]);
-		disconnectClient(fd);
+		user->SetHasDisconnected();
 		return ;
 	}
 
 	if (input[1] != _password)	/* wrong password, then user get disconnected */
 	{
 		Rep::E464(NR_IN);
-		disconnectClient(fd);
+		user->SetHasDisconnected();
 		return ;
 	}
 
@@ -169,9 +169,7 @@ void Server::cmdPing(const std::vector<std::string>& input, int fd)
 
 void Server::cmdPong(const std::vector<std::string>& input, int fd)
 {
-	SocketIo	*io = _io[fd];
-
-	(*io) << input[1];
+	/* Nothing to answer to PONG, silently ignore */
 }
 
 void Server::cmdJoin(const std::vector<std::string>& input, int fd)
@@ -186,7 +184,7 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		return ;
 	}
 
-	if (input.size() < 1)
+	if (input.size() < 2)
 	{
 		Rep::E461(NR_IN, input[0]);
 		return ;
@@ -237,13 +235,13 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 			(_userToIoLookup[*uit])->Send();
 		}
 
-		/* Send Topic*/
+		/* Send Topic */
 		Rep::R332(*io, chan->GetName(), user->GetNick(), chan->GetTopic());
 		
 		/* Send channel user list as nicks */
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
-			Rep::R353(NR_IN, user->GetNick(), (*uit)->GetNick());
-		Rep::R366(NR_IN, user->GetNick());
+			Rep::R353(NR_IN, chan->GetName(), (*uit)->GetNick());
+		Rep::R366(NR_IN, chan->GetName());
 
 		if (creator)
 		{
@@ -402,7 +400,7 @@ void Server::cmdPart(const std::vector<std::string>& input, int fd)
 		return ;
 	}
 
-	if (input.size() < 1)
+	if (input.size() < 2)
 	{
 		Rep::E461(NR_IN, input[0]);
 		return ;

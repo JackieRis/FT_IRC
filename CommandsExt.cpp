@@ -15,7 +15,7 @@ void Server::QuitUserFromServer(User *user, const std::string& reason)
 			std::set<User *>::const_iterator it = usrList.begin();
 			std::stringstream ss;
 
-			ss << ":" << user->GetNick() << " QUIT " << chan->GetName() << " " << reason;
+			ss << ":" << user->GetNick() << " QUIT " << reason;
 
 			for (; it != usrList.end(); ++it)
 			{

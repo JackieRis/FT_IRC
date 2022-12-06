@@ -58,7 +58,7 @@ void Server::removeAllChannels(bool emptyOnly)
 
 	for (it = _channel.begin(); it != _channel.end(); )
 	{
-		if (!emptyOnly || (emptyOnly && it->second->GetSize()))
+		if (!emptyOnly || (emptyOnly && (it->second->GetSize() == 0)))
 		{
 			delete it->second;
 			_channel.erase(it++);
@@ -104,7 +104,6 @@ void	Server::disconnectClient(int fd)
 		{
 			User		*user = _user[fd];
 			SocketIo	*io = _io[fd];
-			// loop through all channels to notify them of this user's disconnection
 
 			if (user->GetRegistered())
 				_nickToUserLookup.erase(user->GetNick());
