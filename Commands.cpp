@@ -236,7 +236,7 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		}
 
 		/* Send Topic */
-		Rep::R332(*io, chan->GetName(), user->GetNick(), chan->GetTopic());
+		Rep::R332(NR_IN, chan->GetName(), chan->GetTopic());
 		
 		/* Send channel user list as nicks */
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
