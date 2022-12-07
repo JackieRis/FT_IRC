@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 16:38:53 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 16:58:24 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -571,13 +571,51 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 	SocketIo	*io = _io[fd];
 
 	_cmdsCalled["STATS"]++;
+
 	if (input.size() < 2)
 	{
 		Rep::R219(NR_IN, "");
 		return ;
 	}
+	
+	std::string toDo;
+	if (input[1].find('l') != std::string::npos)
+	{
+		std::stringstream ss;
 
-	Rep::R219(NR_IN, "");
+		ss << "42ircserv 0 ";
+		ss << SocketIo::sentMsg << " " << (SocketIo::sentkb / 1024) << " ";
+		ss << SocketIo::recvMsg << " " << (SocketIo::recvkb / 1024) << " ";
+		ss << (time(0) - _startupTimestamp);
+		
+		Rep::R211(NR_IN, ss.str());
+		toDo += 'l';
+	}
+	if (input[1].find('m') != std::string::npos)
+	{
+		std::stringstream ss;
+
+		// for each cmd in _cmdsCalled
+		// cmd count 0 0 // code 0 0 inside the reply instead
+		Rep::R212(NR_IN, ss.str());
+		toDo += 'm';
+	}
+	if (input[1].find('o') != std::string::npos)
+	{
+		std::stringstream ss;
+
+		Rep::R243(NR_IN, ss.str());
+		toDo += 'o';
+	}
+	if (input[1].find('u') != std::string::npos)
+	{
+		std::stringstream ss;
+
+		Rep::R242(NR_IN, ss.str());
+		toDo += 'u';
+	}
+
+	Rep::R219(NR_IN, toDo);
 }
 
 void Server::cmdPart(const std::vector<std::string>& input, int fd)
