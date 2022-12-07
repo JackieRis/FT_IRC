@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:47:18 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/05 16:01:59 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 10:43:59 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ protected:
 	std::map<std::string, Channels *>	_channel;
 	int									_port;
 	std::string							_password;
+	time_t								_startupTimestamp;
 
 	/*
 		Command handlers
@@ -83,6 +84,7 @@ protected:
 	void	cmdPong(const std::vector<std::string>& input, int fd);
 	void	cmdMode(const std::vector<std::string>& input, int fd);
 	void	cmdTopic(const std::vector<std::string>& input, int fd);
+	void	cmdTime(const std::vector<std::string>& input, int fd);
 
 	// Communication
 	int		checkChan(std::string name); /* ALED PAS ICI */
@@ -94,6 +96,7 @@ protected:
 	void	initCmds();
 
 	/** CommandsExt.cpp **/
+	void	SendToAllInChannel(Channels *chan, const std::string& msg);
 	void	QuitUserFromServer(User *user, const std::string& reason);
 	void	PartUserFromAllChannel(User *user, const std::string& msg);
 	void	PartUserFromChannel(User *user, Channels *chan, const std::string& msg);

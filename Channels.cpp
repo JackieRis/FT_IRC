@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channels.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/03 20:18:43 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 10:05:49 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,26 @@ Channels::Channels(const std::string& chanName, User *firstUser) : channelName(c
 {
 	users.insert(firstUser);
 	opped.push_back(firstUser);
+
+	lastTopicEditor = firstUser->GetNick();
+	lastTopicChangeDate = time(0);
+
+	std::cerr << "Channel " << chanName << " created" << std::endl;
 }
 
 Channels::~Channels()
 {
 	// No internal allocations are done within the class
+
+	std::cerr << "Channel " << channelName << " destroyed" << std::endl;
 }
 
 // Removes the user from the channel
 // If the channel becomes empty, it has to be deleted externally
 void	Channels::RemoveUser(User *user)
 {
-	if (users.find(user) != users.end())
-		return ; // return false;
+	if (users.find(user) == users.end())
+		return ;
 	
 	std::vector<User *>::iterator it;
 	
@@ -51,7 +58,7 @@ void	Channels::AddUser(User *user)
 	users.insert(user);
 }
 
-void	Channels::SetTopic(const std::string& t, const std::string& author) {topic = t; lastTopicEditor = author;}
+void	Channels::SetTopic(const std::string& t, const std::string& author) {topic = t; lastTopicEditor = author; lastTopicChangeDate = time(0);}
 
 const std::set<User *>	&Channels::GetUsers() const {return(users);}
 const std::string&	Channels::GetName() const {return (channelName);}
@@ -106,7 +113,7 @@ const std::string&	Channels::GetLastTopicEditor() const
 	return (lastTopicEditor);
 }
 
-uint64_t 			Channels::GetLastTopicChangeDate() const
+time_t 	Channels::GetLastTopicChangeDate() const
 {
 	return (lastTopicChangeDate);
 }

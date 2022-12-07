@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channels.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/03 20:14:50 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 09:43:09 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <set>
 # include "User.hpp"
 # include <sys/types.h>
+# include <iostream>
 
 class Channels
 {
@@ -25,7 +26,7 @@ class Channels
 	std::string channelName;
 	std::string topic;
 	std::string lastTopicEditor;
-	uint64_t	lastTopicChangeDate;
+	time_t		lastTopicChangeDate;
 
 	std::set<User *> users;
 	std::vector<User *> opped;
@@ -51,7 +52,7 @@ class Channels
 	//const std::vector<int>			GetUserFd() const;
 	const std::string&				GetTopic() const;
 	const std::string&				GetLastTopicEditor() const;
-	uint64_t						GetLastTopicChangeDate() const;
+	time_t							GetLastTopicChangeDate() const;
 	int GetSize() const;
 	// GetUserList() ?
 };

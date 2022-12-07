@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <aberneli@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:43 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/03 20:10:24 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 10:54:18 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,9 @@ std::vector<std::string>	Utils::ToList(const std::string& input)
 	if (!tmp.empty())
 		res.push_back(tmp);
 	return (res);
+}
+
+bool	Utils::IsChannel(const std::string& target)
+{
+	return (target[0] == '#' || target[0] == '&');
 }

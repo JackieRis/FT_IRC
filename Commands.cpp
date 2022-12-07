@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/05 16:35:50 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 11:12:21 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,15 +86,27 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 		Rep::E431(NR_IN);
 		return ;
 	}
-	std::map<int, User *>::iterator	it = _user.begin();
-	for (; it != _user.end(); ++it)
+	
+	if (_nickToUserLookup.find(input[1]) != _nickToUserLookup.end())
 	{
-		if (it->second->GetNick() == input[1])
-		{
-			Rep::E433(NR_IN, input[1]);
-			return ;
-		}
+		Rep::E433(NR_IN, input[1]);
+		return ;
 	}
+
+	// check if nick is valid
+	
+
+	/* This is the re-nick case */
+	if (user->GetRegistered())
+	{
+		_nickToUserLookup.erase(user->GetNick());
+		user->SetNick(input[1]);
+		_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
+		
+		// notify nick change to other users
+		return ;
+	}
+
 	user->SetNick(input[1]);
 	user->SetDidNick(true);
 	
@@ -169,6 +181,7 @@ void Server::cmdPing(const std::vector<std::string>& input, int fd)
 
 void Server::cmdPong(const std::vector<std::string>& input, int fd)
 {
+	(void)input; (void)fd;
 	/* Nothing to answer to PONG, silently ignore */
 }
 
@@ -232,6 +245,10 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
 		{
 			SocketIo	*chanUserIo = _userToIoLookup[*uit];
+			
+			if (!chanUserIo)
+				continue ;
+
 			(*chanUserIo) << ":" << user->GetNick() << " JOIN " << chan->GetName();
 			chanUserIo->Send();
 		}
@@ -387,7 +404,51 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 
 void Server::cmdMode(const std::vector<std::string>& input, int fd)
 {
-	(void)input;(void)fd;
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+	Channels	*chan; /* Get the pointer later */
+
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+
+	if (input.size() < 2)
+	{
+		Rep::E461(NR_IN, input[0]);
+		return ;
+	}
+
+	/* target == user */
+	if (!Utils::IsChannel(input[1]))
+	{
+		if (!_nickToUserLookup.count(input[1]))
+		{
+			Rep::E401(NR_IN, input[1]);
+			return ;
+		}
+		if (input[1] != user->GetNick())
+		{
+			Rep::E502(NR_IN);
+			return ;
+		}
+		if (input.size() < 3)
+		{
+			Rep::R221(NR_IN, user->GetMode());
+			return ;
+		}
+
+		return ;
+	}
+
+	if (!_channel.count(input[1]))
+	{
+		Rep::E403(NR_IN, input[1]);
+		return ;
+	}
+
+	chan = _channel[input[1]];
 }
 
 void Server::cmdTopic(const std::vector<std::string>& input, int fd)
@@ -436,8 +497,25 @@ void Server::cmdTopic(const std::vector<std::string>& input, int fd)
 	}
 
 	/* Topic Change */
+	// check permissions before allowing
+	std::string topic = input[2].substr((input[2][0] == ':'));
 
-	/* check input, replace string, notify every channel users */
+	chan->SetTopic(topic, user->GetNick());
+
+	std::stringstream ss;
+	ss << "TOPIC " << chan->GetName() << " :" << chan->GetTopic();
+	
+	SendToAllInChannel(chan, ss.str());
+}
+
+void Server::cmdTime(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+
+	Rep::R391(NR_IN);
+	
+	(void)input;
 }
 
 void Server::cmdPart(const std::vector<std::string>& input, int fd)
@@ -497,5 +575,6 @@ void Server::initCmds()
 	_cmds.insert(std::make_pair(std::string("PRIVMSG"), &Server::cmdPrivmsg));
 	_cmds.insert(std::make_pair(std::string("MODE"), &Server::cmdMode));
 	_cmds.insert(std::make_pair(std::string("TOPIC"), &Server::cmdTopic));
+	_cmds.insert(std::make_pair(std::string("TIME"), &Server::cmdTime));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));
 }

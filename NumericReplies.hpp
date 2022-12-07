@@ -21,13 +21,16 @@ public:
 	static void R003(NR_ARG, const std::string& date);
 	static void R004(NR_ARG); /* hardcoding every available modes */
 
+	static void R221(NR_ARG, int modes);
+
 	static void R331(NR_ARG, const std::string& chanName);
 	static void R332(NR_ARG, const std::string& chanName, const std::string& topic);
-	static void R333(NR_ARG, const std::string& chanName, const std::string& setterNick, uint64_t timestamp);
+	static void R333(NR_ARG, const std::string& chanName, const std::string& setterNick, time_t timestamp);
 
 	static void R353(NR_ARG, const std::string& chanName, const std::string& nick);
 	static void R366(NR_ARG, const std::string& chanName);
 
+	static void R391(NR_ARG);
 
 	/* Errors */
 	static void E401(NR_ARG, const std::string& inputNick);
@@ -51,6 +54,8 @@ public:
 	static void E465(NR_ARG);
 
 	/* 497 - 478 channel access restrictions */
+
+	static void E502(NR_ARG);
 };
 
 #endif

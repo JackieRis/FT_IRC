@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:48:58 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/05 16:39:40 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 10:01:25 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ void Server::welcomeUser(int fd)
 	User		*user = _user[fd];
 
 	user->SetRegistered(true);
-	Rep::R001(*io, user->GetNick());
-	Rep::R002(*io, user->GetNick());
-	Rep::R003(*io, user->GetNick(), "12/04/2022 13:30");
-	Rep::R004(*io, user->GetNick());
+	Rep::R001(NR_IN);
+	Rep::R002(NR_IN);
+	Rep::R003(NR_IN, "12/04/2022 13:30"); // use the server timestamp to generate a date
+	Rep::R004(NR_IN);
 	_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
 }
 
@@ -151,7 +151,7 @@ void	Server::acceptClient()
 
 void Server::manageClient(int fd)
 {
-//	User		*user;
+	User		*user;
 	SocketIo	*io;
 	std::string msg;
 
@@ -231,6 +231,8 @@ int	Server::init()
 	_client_fd[0] = sockfd;
 
 	initCmds();
+
+	_startupTimestamp = time(0);
 
 	return (0);
 }

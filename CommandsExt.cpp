@@ -28,6 +28,21 @@ void Server::QuitUserFromServer(User *user, const std::string& reason)
 			chan->RemoveUser(user);
 		}
 	}
+	removeAllChannels(true);
+}
+
+void Server::SendToAllInChannel(Channels *chan, const std::string& msg)
+{
+	const std::set<User *>& usrList = chan->GetUsers();
+	std::set<User *>::const_iterator it = usrList.begin();
+
+	for (; it != usrList.end(); ++it)
+	{
+		SocketIo	*tmpIo = _userToIoLookup[*it];
+
+		(*tmpIo) << msg;
+		tmpIo->Send();
+	}
 }
 
 void Server::PartUserFromAllChannel(User *user, const std::string& msg)

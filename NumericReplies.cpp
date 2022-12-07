@@ -28,6 +28,12 @@ void Rep::R004(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
+void Rep::R221(NR_ARG, int modes)
+{
+	io << "221 " << cNick << " " << modes;
+	io.Send();
+}
+
 void Rep::R331(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
 	io << "331 " << cNick << " " << chanName << " :No topic set";
@@ -40,7 +46,7 @@ void Rep::R332(SocketIo& io, const std::string& cNick, const std::string& chanNa
 	io.Send();
 }
 
-void Rep::R333(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& setterNick, uint64_t timestamp)
+void Rep::R333(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& setterNick, time_t timestamp)
 {
 	io << "333 " << cNick << " " << chanName << " " << setterNick << " " << timestamp;
 	io.Send();
@@ -55,6 +61,12 @@ void Rep::R353(SocketIo& io, const std::string& cNick, const std::string& chanNa
 void Rep::R366(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
 	io << "366 " << cNick << " " << chanName << " :End of NAMES list";
+	io.Send();
+}
+
+void Rep::R391(NR_ARG)
+{
+	io << "391 " << cNick << " 42ircserv " << time(0) << " :hello I'm not a date";
 	io.Send();
 }
 
@@ -146,5 +158,11 @@ void Rep::E464(SocketIo& io, const std::string& cNick)
 void Rep::E465(SocketIo& io, const std::string& cNick)
 {
 	io << "465 " << cNick << " :You are banned from this server";
+	io.Send();
+}
+
+void Rep::E502(SocketIo& io, const std::string& cNick)
+{
+	io << "502 " << cNick << " :Can't change mode for other users";
 	io.Send();
 }
