@@ -161,6 +161,36 @@ void Rep::E465(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
+void Rep::E471(SocketIo& io, const std::string& cNick, const std::string& chanName)
+{
+	io << "471 " << cNick << " " << chanName << ":Cannot join channel (+l)";
+	io.Send();
+}
+
+void Rep::E472(SocketIo& io, const std::string& cNick, const std::string& modeChar)
+{
+	io << "472 " << cNick << " " << modeChar << " :is unknown mode char to me";
+	io.Send();
+}
+
+void Rep::E473(SocketIo& io, const std::string& cNick, const std::string& chanName)
+{
+	io << "473 " << cNick << " " << chanName << ":Cannot join channel (+i)";
+	io.Send();
+}
+
+void Rep::E474(SocketIo& io, const std::string& cNick, const std::string& chanName)
+{
+	io << "474 " << cNick << " " << chanName << ":Cannot join channel (+b)";
+	io.Send();
+}
+
+void Rep::E475(SocketIo& io, const std::string& cNick, const std::string& chanName)
+{
+	io << "475 " << cNick << " " << chanName << ":Cannot join channel (+k)";
+	io.Send();
+}
+
 void Rep::E476(SocketIo& io, const std::string& cNick)
 {
 	io << "476 " << cNick << " :Bad Channel Mask";

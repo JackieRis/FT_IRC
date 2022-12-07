@@ -55,8 +55,12 @@ public:
 	static void E464(NR_ARG);
 	static void E465(NR_ARG);
 
-	/* 497 - 478 channel access restrictions */
-	/* For some ungodly reason, ERR_BADCHANMASK doesn't take the user nick as input, still needs a string tho*/
+	static void E471(NR_ARG, const std::string& chanName);
+	static void E472(NR_ARG, const std::string& modeChar);
+	static void E473(NR_ARG, const std::string& chanName);
+	static void E474(NR_ARG, const std::string& chanName);
+	static void E475(NR_ARG, const std::string& chanName);
+	/* For some ungodly reason, ERR_BADCHANMASK doesn't take the user nick as input, still needs a string tho so it's fine */
 	static void E476(NR_ARG);
 
 	static void E502(NR_ARG);
