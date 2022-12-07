@@ -52,9 +52,12 @@ void Rep::R333(SocketIo& io, const std::string& cNick, const std::string& chanNa
 	io.Send();
 }
 
-void Rep::R353(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& nick)
+void Rep::R353(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& nick, char chanPrefix, char userPrefix)
 {
-	io << "353 " << cNick << " = " << chanName << " :" << nick;
+	if (userPrefix == 'u')
+		io << "353 " << cNick << " " << chanPrefix << " " << chanName << " :" << nick;
+	else
+		io << "353 " << cNick << " " << chanPrefix << " " << chanName << " :" << userPrefix << nick;
 	io.Send();
 }
 

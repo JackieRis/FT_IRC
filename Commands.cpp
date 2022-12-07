@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 14:49:52 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 15:29:11 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,7 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 	
 	std::vector<std::string>::const_iterator it = lst.begin();
 	bool creator = false;
-	int n = 0;
+	size_t n = 0;
 
 	for (; it != lst.end(); ++it, ++n)
 	{
@@ -254,7 +254,7 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 				return ;
 			}
 
-			if (flags & CM_KEY && !chan->ValidateKey(*keyIt))
+			if (flags & CM_KEY)
 			{
 				std::string inputKey = std::string("");
 
@@ -290,7 +290,7 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		
 		/* Send channel user list as nicks */
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
-			Rep::R353(NR_IN, chan->GetName(), (*uit)->GetNick());
+			Rep::R353(NR_IN, chan->GetName(), (*uit)->GetNick(), chan->GetChanPrefix(), chan->GetUserPrefix((*uit)));
 		Rep::R366(NR_IN, chan->GetName());
 
 		if (creator)

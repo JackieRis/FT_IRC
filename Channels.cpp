@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 14:40:41 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 15:30:25 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ Channels::Channels(const std::string& chanName, User *firstUser) : channelName(c
 {
 	users.insert(firstUser);
 	opped.insert(firstUser);
+	prefix.insert(std::make_pair(firstUser, '@'));
 
 	lastTopicEditor = firstUser->GetNick();
 	lastTopicChangeDate = time(0);
@@ -46,17 +47,26 @@ void	Channels::RemoveUser(User *user)
 	if (opped.count(user))
 		opped.erase(user);
 	
+	prefix.erase(user);
 	users.erase(user);
-	// Don't forget to delete the channel from Server if channel.GetSize() == 0
 }
 
 void	Channels::AddUser(User *user)
 {
 	users.insert(user);
+	prefix.insert(std::make_pair(user, 'u'));
 }
 
 void	Channels::SetTopic(const std::string& t, const std::string& author) {topic = t; lastTopicEditor = author; lastTopicChangeDate = time(0);}
 void	Channels::SetKey(const std::string newKey) {key = newKey;}
+
+void	Channels::SetMode(ChannelModeE mode, int state)
+{
+	if (!state)
+		modes &= ~mode;
+	else 
+		modes |= mode;
+}
 
 const std::set<User *>	&Channels::GetUsers() const {return(users);}
 const std::string&	Channels::GetName() const {return (channelName);}
@@ -73,14 +83,6 @@ const std::vector<std::string> Channels::GetUserNickList() const
 	return (lst);
 }
 
-void	Channels::SetMode(ChannelModeE mode, int state)
-{
-	if (!state)
-		modes &= ~mode;
-	else 
-		modes |= mode;
-}
-
 const std::vector<std::string> Channels::GetUserNameList() const
 {
 	std::vector<std::string> lst;
@@ -91,6 +93,11 @@ const std::vector<std::string> Channels::GetUserNameList() const
 		lst.push_back((*it)->GetName());
 	}
 	return (lst);
+}
+
+int		Channels::GetModes() const
+{
+	return (modes);
 }
 
 bool	Channels::HasUser(User *user) const
@@ -132,6 +139,18 @@ const std::string&	Channels::GetLastTopicEditor() const
 time_t 	Channels::GetLastTopicChangeDate() const
 {
 	return (lastTopicChangeDate);
+}
+
+char	Channels::GetChanPrefix() const
+{
+	if (modes & CM_SECRET)
+		return ('@');
+	return ('=');
+}
+
+char	Channels::GetUserPrefix(User *user) const
+{
+	return (prefix.find(user)->second);
 }
 
 int Channels::GetSize() const

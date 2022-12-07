@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 14:40:13 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 15:20:57 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,14 @@
 # include "User.hpp"
 # include <sys/types.h>
 # include <iostream>
+# include <map>
 
 # include "Modes.hpp"
 
 class Channels
 {
 	protected:
+
 	std::string channelName;
 	std::string topic;
 	std::string lastTopicEditor;
@@ -33,6 +35,7 @@ class Channels
 	std::set<User *> users;
 	std::set<User *> opped;
 	std::set<User *> banned;
+	std::map<User *, char> prefix;
 
 	int					modes;
 	std::string			key;
@@ -63,6 +66,8 @@ class Channels
 	const std::string&				GetTopic() const;
 	const std::string&				GetLastTopicEditor() const;
 	time_t							GetLastTopicChangeDate() const;
+	char							GetChanPrefix() const;
+	char							GetUserPrefix(User *user) const;
 	int GetSize() const;
 	// GetUserList() ?
 };
