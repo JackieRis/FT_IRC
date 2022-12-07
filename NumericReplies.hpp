@@ -23,6 +23,12 @@ public:
 	static void R003(NR_ARG, const std::string& date);
 	static void R004(NR_ARG);
 
+	static void R211(NR_ARG, const std::string& infostr); //RPL_STATSLINKINFO
+	static void R212(NR_ARG, const std::string& infostr); //RPL_STATSCOMMANDS
+	static void R219(NR_ARG, const std::string& letters); //RPL_ENDOFSTATS
+	static void R242(NR_ARG, const std::string& infostr); //RPL_STATSUPTIME
+	static void R243(NR_ARG, const std::string& infostr); //RPL_STATSOLINE
+
 	static void R221(NR_ARG, int modes);
 
 	static void R331(NR_ARG, const std::string& chanName);

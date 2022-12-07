@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/08 13:42:24 by aberneli          #+#    #+#             */
-/*   Updated: 2022/11/28 00:58:33 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 16:28:57 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ int	SocketIo::Send()
 	std::string tmp;
 
 	os << "\r\n";
+	SocketIo::sentkb += os.str().length();
+	SocketIo::sentMsg++;
 	tmp = os.str();
 	os.clear();
 	os.str(std::string());
@@ -48,6 +50,8 @@ bool	SocketIo::Receive()
 	if (rd == 0)
 		throw EConnectionClosed();
 	
+	SocketIo::recvkb += rd;
+	
 	buffer[rd] = '\0';
 	is << buffer;
 	consumable = (is.str().find("\r\n") != std::string::npos);
@@ -62,6 +66,7 @@ std::string	SocketIo::Consume()
 	if (!consumable)
 		return (""); // bad consume, throw exception maybe ?
 
+	SocketIo::recvMsg++;
 	tmp = is.str();
 	pos = tmp.find("\r\n");
 	is.str(std::string(tmp.substr(pos + 2))); // make sure to keep older content if a packet contains multiple lines
@@ -85,3 +90,9 @@ const char *SocketIo::ERecvError::what() const throw()
 {
 	return (strerror(errno));
 }
+
+/* Necessary for static members */
+uint64_t SocketIo::sentkb;
+uint64_t SocketIo::sentMsg;
+uint64_t SocketIo::recvkb;
+uint64_t SocketIo::recvMsg;
