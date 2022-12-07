@@ -12,6 +12,8 @@
 # define NR_ARG SocketIo& io, const std::string& cNick
 # define NR_IN *io, user->GetNick()
 
+# include "Modes.hpp"
+
 class Rep
 {
 public:
@@ -19,7 +21,7 @@ public:
 	static void R001(NR_ARG);
 	static void R002(NR_ARG); /* hardcoding name and version */
 	static void R003(NR_ARG, const std::string& date);
-	static void R004(NR_ARG); /* hardcoding every available modes */
+	static void R004(NR_ARG);
 
 	static void R221(NR_ARG, int modes);
 
@@ -54,6 +56,8 @@ public:
 	static void E465(NR_ARG);
 
 	/* 497 - 478 channel access restrictions */
+	/* For some ungodly reason, ERR_BADCHANMASK doesn't take the user nick as input, still needs a string tho*/
+	static void E476(NR_ARG);
 
 	static void E502(NR_ARG);
 };

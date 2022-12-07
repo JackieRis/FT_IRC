@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 11:24:02 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 12:34:22 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,6 @@ void Server::cmdUser(const std::vector<std::string>& input, int fd) /* must add 
 	user->SetName(input[1]);
 	user->SetRealName(input[4]);
 
-	/* set user's mode, on login, only two modes are available, such as invisible */
-	int mode = std::atoi(input[2].c_str());
-	mode &= (0x2 | 0x4);
-
-	user->SetMode(mode);
 	user->SetDidUser(true);
 
 	if (user->GetDidNick())
@@ -231,6 +226,11 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 
 	for (; it != lst.end(); ++it)
 	{
+		if (!Utils::IsChannel(*it))
+		{
+			Rep::E476(*io, *it);
+			return ;
+		}
 		// check if channel exist or can be created, validate channel name
 		if (_channel.find(*it) == _channel.end())
 		{
@@ -444,6 +444,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 		}
 		if (input.size() < 3)
 		{
+			/* MODE user query */
 			Rep::R221(NR_IN, user->GetMode());
 			return ;
 		}

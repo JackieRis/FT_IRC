@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 09:43:09 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 12:21:33 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include "User.hpp"
 # include <sys/types.h>
 # include <iostream>
+
+# include "Modes.hpp"
 
 class Channels
 {

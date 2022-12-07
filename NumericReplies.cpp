@@ -24,7 +24,7 @@ void Rep::R004(SocketIo& io, const std::string& cNick)
 {
 	/* User modes https://www.rfc-editor.org/rfc/rfc2812#section-3.1.5 */
 	/* Channel modes https://www.rfc-editor.org/rfc/rfc2811#section-4 */
-	io << "004 " << cNick << " 42ircserv 1.0 aiwroOs ik";
+	io << "004 " << cNick << " 42ircserv 1.0 " << CHANNELMODE_CHARLIST << " " << USERMODE_CHARLIST;
 	io.Send();
 }
 
@@ -158,6 +158,12 @@ void Rep::E464(SocketIo& io, const std::string& cNick)
 void Rep::E465(SocketIo& io, const std::string& cNick)
 {
 	io << "465 " << cNick << " :You are banned from this server";
+	io.Send();
+}
+
+void Rep::E476(SocketIo& io, const std::string& cNick)
+{
+	io << "476 " << cNick << " :Bad Channel Mask";
 	io.Send();
 }
 
