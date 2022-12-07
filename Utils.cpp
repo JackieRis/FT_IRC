@@ -79,6 +79,16 @@ std::vector<std::string>	Utils::ToList(const std::string& input)
 	return (res);
 }
 
+int	Utils::checkNick(std::string input)
+{
+	if (!(input.find(' ') == std::string::npos || input.find(',') == std::string::npos || input.find('*') == std::string::npos 
+		|| input.find('?') == std::string::npos || input.find('!') == std::string::npos || input.find('@') == std::string::npos \
+		|| input.find('#') == std::string::npos || input.find('%') == std::string::npos || input.find(':') == std::string::npos \
+		|| input.find('$') == std::string::npos || input.find('.') == std::string::npos))
+		return (-1);
+	return (0);
+}
+
 bool	Utils::IsChannel(const std::string& target)
 {
 	return (target[0] == '#' || target[0] == '&');

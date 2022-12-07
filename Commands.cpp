@@ -89,6 +89,17 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 	}
 
 	// check if nick is valid
+
+	if (user->GetRegistered() && Utils::checkNick(input[2]) == -1)
+	{
+		Rep::E432(NR_IN, input[2]);
+		return ;
+	}
+	if (Utils::checkNick(input[1]) == -1)
+	{
+		Rep::E432((*io), "*", input[1]);
+		return ;
+	}
 	
 
 	/* This is the re-nick case */
@@ -433,7 +444,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
-	Channels	*chan; /* Get the pointer later */
+	//Channels	*chan; /* Get the pointer later */
 
 	if (!user->GetRegistered())
 	{
@@ -484,7 +495,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 		return ;
 	}
 
-	chan = _channel[input[1]];
+	//chan = _channel[input[1]];
 }
 
 void Server::cmdTopic(const std::vector<std::string>& input, int fd)

@@ -37,6 +37,8 @@ public:
 	*/
 	static std::vector<std::string>	ToList(const std::string& input);
 
+	static int	checkNick(std::string input);
+
 	/*
 		Checks the first character to identify if target is a channel
 	*/
