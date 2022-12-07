@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 14:41:10 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 14:49:52 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,10 +221,10 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		keyLst = Utils::ToList(input[2]);
 	
 	std::vector<std::string>::const_iterator it = lst.begin();
-	std::vector<std::string>::const_iterator keyIt = keyLst.begin();
 	bool creator = false;
+	int n = 0;
 
-	for (; it != lst.end(); ++it)
+	for (; it != lst.end(); ++it, ++n)
 	{
 		if (!Utils::IsChannel(*it))
 		{
@@ -256,8 +256,15 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 
 			if (flags & CM_KEY && !chan->ValidateKey(*keyIt))
 			{
-				Rep::E475(NR_IN, chan->GetName());
-				return ;
+				std::string inputKey = std::string("");
+
+				if (n < keyLst.size())
+					inputKey = keyLst[n];
+				if (!chan->ValidateKey(inputKey))
+				{
+					Rep::E475(NR_IN, chan->GetName());
+					return ;
+				}
 			}
 
 			chan->AddUser(user);
@@ -290,10 +297,6 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		{
 			// give op and notify
 		}
-
-
-		if (keyIt != keyLst.end())
-			++keyIt;
 	}
 }
 
