@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:47:18 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/07 15:58:15 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 16:34:55 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ protected:
 	*/
 	typedef void (Server::*cmdHandler)(const std::vector<std::string>&, int);
 	std::map<std::string, cmdHandler>	_cmds;
+	std::map<std::string, int>			_cmdsCalled;
 
 	/** Server.cpp **/
 	void	ChanMsg(int fd, std::string msg, Channels* chan);

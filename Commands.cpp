@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 15:59:01 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 16:38:53 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void Server::command(const std::string& str, int fd)
 void Server::cmdCap(const std::vector<std::string>&, int)
 {
 	/* We do not support CAP, silently ignore, don't even bother with ERR_NEEDMOREPARAM*/
+	_cmdsCalled["CAP"]++;
 }
 
 /* USER <username> <flags> <> <realname> */
@@ -50,6 +51,7 @@ void Server::cmdUser(const std::vector<std::string>& input, int fd) /* must add 
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 	
+	_cmdsCalled["USER"]++;
 	if (user->GetRegistered())
 	{
 		Rep::E462(*io, user->GetNick());
@@ -76,6 +78,7 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 
+	_cmdsCalled["NICK"]++;
 	if (input.size() < 2)
 	{
 		Rep::E431(NR_IN);
@@ -123,6 +126,7 @@ void Server::cmdPass(const std::vector<std::string>& input, int fd) /* must add 
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 	
+	_cmdsCalled["PASS"]++;
 	if (_user[fd]->GetRegistered() == true)
 	{
 		Rep::E462(NR_IN);
@@ -168,6 +172,7 @@ void Server::cmdPing(const std::vector<std::string>& input, int fd)
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 
+	_cmdsCalled["PING"]++;
 	if (!user->GetRegistered())
 	{
 		Rep::E451(NR_IN);
@@ -186,6 +191,7 @@ void Server::cmdPing(const std::vector<std::string>& input, int fd)
 void Server::cmdPong(const std::vector<std::string>& input, int fd)
 {
 	(void)input; (void)fd;
+	_cmdsCalled["PONG"]++;
 	/* Nothing to answer to PONG, silently ignore */
 }
 
@@ -195,6 +201,7 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 	SocketIo	*io = _io[fd];
 	Channels	*chan; /* Get the pointer later since we might have to create the channel on the fly */
 
+	_cmdsCalled["JOIN"]++;
 	if (!user->GetRegistered())
 	{
 		Rep::E451(NR_IN);
@@ -325,6 +332,7 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 {
 	SocketIo	*io = _io[fd];
 
+	_cmdsCalled["PRIVMSG"]++;
 	std::cerr << input[input.size() - 1] << std::endl;
 
 	if (_user[fd]->GetRegistered() == false)
@@ -387,6 +395,7 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 	std::vector<std::string>	tmp = Utils::ToList(input[1]);
 	std::vector<std::string>::iterator	it = tmp.begin();
 
+	_cmdsCalled["NOTICE"]++;
 	if (input.size() < 3)
 		return ;
 	int	i = checkChan(input[1]);
@@ -435,6 +444,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 	SocketIo	*io = _io[fd];
 	Channels	*chan; /* Get the pointer later */
 
+	_cmdsCalled["MODE"]++;
 	if (!user->GetRegistered())
 	{
 		Rep::E451(NR_IN);
@@ -549,6 +559,7 @@ void Server::cmdTime(const std::vector<std::string>& input, int fd)
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 
+	_cmdsCalled["TIME"]++;
 	Rep::R391(NR_IN);
 	
 	(void)input;
@@ -559,11 +570,14 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 
+	_cmdsCalled["STATS"]++;
 	if (input.size() < 2)
 	{
-		Rep::E461(NR_IN, input[0]);
+		Rep::R219(NR_IN, "");
 		return ;
 	}
+
+	Rep::R219(NR_IN, "");
 }
 
 void Server::cmdPart(const std::vector<std::string>& input, int fd)
@@ -572,6 +586,7 @@ void Server::cmdPart(const std::vector<std::string>& input, int fd)
 	SocketIo	*io = _io[fd];
 	Channels	*chan; /* Get the pointer later */
 
+	_cmdsCalled["PART"]++;
 	if (!user->GetRegistered())
 	{
 		Rep::E451(NR_IN);
@@ -613,17 +628,31 @@ void Server::cmdPart(const std::vector<std::string>& input, int fd)
 void Server::initCmds()
 {
 	_cmds.insert(std::make_pair(std::string("CAP"), &Server::cmdCap));
+	_cmdsCalled.insert(std::make_pair(std::string("CAP"), 0));
 	_cmds.insert(std::make_pair(std::string("USER"), &Server::cmdUser));
+	_cmdsCalled.insert(std::make_pair(std::string("USER"), 0));
 	_cmds.insert(std::make_pair(std::string("NICK"), &Server::cmdNick));
+	_cmdsCalled.insert(std::make_pair(std::string("NICK"), 0));
 	_cmds.insert(std::make_pair(std::string("PASS"), &Server::cmdPass));
+	_cmdsCalled.insert(std::make_pair(std::string("PASS"), 0));
 	_cmds.insert(std::make_pair(std::string("QUIT"), &Server::cmdQuit));
+	_cmdsCalled.insert(std::make_pair(std::string("QUIT"), 0));
 	_cmds.insert(std::make_pair(std::string("PING"), &Server::cmdPing));
+	_cmdsCalled.insert(std::make_pair(std::string("PING"), 0));
 	_cmds.insert(std::make_pair(std::string("PONG"), &Server::cmdPong));
+	_cmdsCalled.insert(std::make_pair(std::string("PONG"), 0));
 	_cmds.insert(std::make_pair(std::string("JOIN"), &Server::cmdJoin));
+	_cmdsCalled.insert(std::make_pair(std::string("JOIN"), 0));
 	_cmds.insert(std::make_pair(std::string("PRIVMSG"), &Server::cmdPrivmsg));
+	_cmdsCalled.insert(std::make_pair(std::string("PRIVMSG"), 0));
 	_cmds.insert(std::make_pair(std::string("MODE"), &Server::cmdMode));
+	_cmdsCalled.insert(std::make_pair(std::string("MODE"), 0));
 	_cmds.insert(std::make_pair(std::string("TOPIC"), &Server::cmdTopic));
+	_cmdsCalled.insert(std::make_pair(std::string("TOPIC"), 0));
 	_cmds.insert(std::make_pair(std::string("TIME"), &Server::cmdTime));
+	_cmdsCalled.insert(std::make_pair(std::string("TIME"), 0));
 	_cmds.insert(std::make_pair(std::string("STATS"), &Server::cmdStats));
+	_cmdsCalled.insert(std::make_pair(std::string("STATS"), 0));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));
+	_cmdsCalled.insert(std::make_pair(std::string("PART"), 0));
 }
