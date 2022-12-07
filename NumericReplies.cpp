@@ -28,26 +28,31 @@ void Rep::R004(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
-void Rep::R211(SocketIo& , const std::string& , const std::string& )
+void Rep::R211(SocketIo& io, const std::string& cNick, const std::string& infostr)
 {
-
+	io << "221 " << cNick << " " << infostr;
+	io.Send();
 }
 
-void Rep::R212(SocketIo& , const std::string& , const std::string& )
+void Rep::R212(SocketIo& io, const std::string& cNick, const std::string& infostr)
 {
-
+	io << "221 " << cNick << " " << infostr << " 0 0";
+	io.Send();
 }
-void Rep::R219(SocketIo& , const std::string& , const std::string& )
+void Rep::R219(SocketIo& io, const std::string& cNick, const std::string& letters)
 {
-
+	io << "221 " << cNick << " " << letters << " :End of STATS report";
+	io.Send();
 }
-void Rep::R242(SocketIo& , const std::string& , const std::string& )
+void Rep::R242(SocketIo& io, const std::string& cNick, const std::string& infostr)
 {
-
+	io << "221 " << cNick << " :" << infostr;
+	io.Send();
 }
-void Rep::R243(SocketIo& , const std::string& , const std::string& )
+void Rep::R243(SocketIo& io, const std::string& cNick, const std::string& infostr)
 {
-
+	io << "221 " << cNick << " " << infostr;
+	io.Send();
 }
 
 void Rep::R221(SocketIo& io, const std::string& cNick, int modes)
