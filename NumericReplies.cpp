@@ -28,7 +28,29 @@ void Rep::R004(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
-void Rep::R221(NR_ARG, int modes)
+void Rep::R211(SocketIo& , const std::string& , const std::string& )
+{
+
+}
+
+void Rep::R212(SocketIo& , const std::string& , const std::string& )
+{
+
+}
+void Rep::R219(SocketIo& , const std::string& , const std::string& )
+{
+
+}
+void Rep::R242(SocketIo& , const std::string& , const std::string& )
+{
+
+}
+void Rep::R243(SocketIo& , const std::string& , const std::string& )
+{
+
+}
+
+void Rep::R221(SocketIo& io, const std::string& cNick, int modes)
 {
 	io << "221 " << cNick << " " << modes;
 	io.Send();
