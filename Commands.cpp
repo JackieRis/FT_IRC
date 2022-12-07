@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 12:34:22 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 14:41:10 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,12 +238,27 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 			addChannel(*it, user);
 		}
 		chan = _channel[*it];
+		int flags = chan->GetModes();
 
 		if (!creator)
 		{
-			// check BAD KEY
-			// check BANNED
-			// check INVITE ONLY
+			if (flags & CM_BAN && chan->IsBanned(user))
+			{
+				Rep::E474(NR_IN, chan->GetName());
+				return ;
+			}
+			
+			if (flags & CM_INVITEONLY)
+			{
+				Rep::E473(NR_IN, chan->GetName());
+				return ;
+			}
+
+			if (flags & CM_KEY && !chan->ValidateKey(*keyIt))
+			{
+				Rep::E475(NR_IN, chan->GetName());
+				return ;
+			}
 
 			chan->AddUser(user);
 		}
@@ -448,6 +463,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 			Rep::R221(NR_IN, user->GetMode());
 			return ;
 		}
+		/* MODE user edit */
 
 		return ;
 	}
@@ -455,6 +471,13 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 	if (!_channel.count(input[1]))
 	{
 		Rep::E403(NR_IN, input[1]);
+		return ;
+	}
+
+	if (input.size() < 3)
+	{
+		/* MODE channel query */
+		//Rep::R221(NR_IN, user->GetMode());
 		return ;
 	}
 

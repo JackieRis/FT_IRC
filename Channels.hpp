@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 12:21:33 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 14:40:13 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,11 @@ class Channels
 	time_t		lastTopicChangeDate;
 
 	std::set<User *> users;
-	std::vector<User *> opped;
-	std::vector<User *> banned;
+	std::set<User *> opped;
+	std::set<User *> banned;
+
+	int					modes;
+	std::string			key;
 
 	public:
 
@@ -44,13 +47,18 @@ class Channels
 	void	AddUser(User *user);
 
 	void	SetTopic(const std::string& t, const std::string& author);
+	void	SetMode(ChannelModeE mode, int state);
+	void	SetKey(const std::string newKey);
 
 	// Getters
 	const std::set<User *>			&GetUsers() const;
 	const std::string&				GetName() const;
 	const std::vector<std::string>	GetUserNickList() const;
 	const std::vector<std::string>	GetUserNameList() const;
+	int								GetModes() const;
 	bool							HasUser(User *user) const;
+	bool							IsBanned(User *user) const;
+	bool							ValidateKey(const std::string& userKey) const;
 	//const std::vector<int>			GetUserFd() const;
 	const std::string&				GetTopic() const;
 	const std::string&				GetLastTopicEditor() const;

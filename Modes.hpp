@@ -2,7 +2,7 @@
 # define MODES_HPP
 
 # define USERMODE_CHARLIST "ioOrw"
-# define CHANNELMODE_CHARLIST "blikmstn"
+# define CHANNELMODE_CHARLIST "blikmst"
 
 enum UserModeE
 {

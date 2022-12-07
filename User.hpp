@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 22:59:27 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/07 12:22:37 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 13:46:13 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ public:
 	void	SetRealName(const std::string &RealName);
 	void	SetPass(bool pass);
 	void	SetRegistered(bool Registered);
-	void	SetMode(UserModeE mode);
+	void	SetMode(UserModeE mode, int state);
 	void	SetDidUser(bool b);
 	void	SetDidNick(bool b);
 	void	SetHasDisconnected();
