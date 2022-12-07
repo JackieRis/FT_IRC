@@ -25,8 +25,11 @@ void	Server::ChanMsg(int fd, std::string msg, Channels* chan)
 	it = _user.find(fd);
 	for (; Sit != tmp.end(); ++Sit)
 	{
-		(*_io[(*Sit)->GetFd()]) << ":" << it->second->GetNick() << " PRIVMSG " << chan->GetName() <<  " " << msg;
-		(*_io[(*Sit)->GetFd()]).Send();
+		if (fd != (*Sit)->GetFd())
+		{
+			(*_io[(*Sit)->GetFd()]) << ":" << it->second->GetNick() << " PRIVMSG " << chan->GetName() <<  " " << msg;
+			(*_io[(*Sit)->GetFd()]).Send();
+		}
 	}
 }
 
