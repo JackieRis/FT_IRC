@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/08 13:34:44 by aberneli          #+#    #+#             */
-/*   Updated: 2022/11/28 00:58:15 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 16:26:32 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <sstream>
 # include <string>
 # include <sys/socket.h>
+# include <sys/types.h>
 # include <stdexcept>
 
 // helper class to communicate with clients
@@ -29,6 +30,10 @@ class SocketIo
 	bool				consumable;
 
 		public:
+	static uint64_t		sentkb;
+	static uint64_t		recvkb;
+	static uint64_t		sentMsg;
+	static uint64_t		recvMsg;
 
 	SocketIo(int newFd);
 	~SocketIo();

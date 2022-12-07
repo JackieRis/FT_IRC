@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 15:29:11 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 15:59:01 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -554,6 +554,18 @@ void Server::cmdTime(const std::vector<std::string>& input, int fd)
 	(void)input;
 }
 
+void Server::cmdStats(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+
+	if (input.size() < 2)
+	{
+		Rep::E461(NR_IN, input[0]);
+		return ;
+	}
+}
+
 void Server::cmdPart(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
@@ -612,5 +624,6 @@ void Server::initCmds()
 	_cmds.insert(std::make_pair(std::string("MODE"), &Server::cmdMode));
 	_cmds.insert(std::make_pair(std::string("TOPIC"), &Server::cmdTopic));
 	_cmds.insert(std::make_pair(std::string("TIME"), &Server::cmdTime));
+	_cmds.insert(std::make_pair(std::string("STATS"), &Server::cmdStats));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));
 }
