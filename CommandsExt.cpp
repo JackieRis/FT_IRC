@@ -45,6 +45,17 @@ void Server::SendToAllInChannel(Channels *chan, const std::string& msg)
 	}
 }
 
+void Server::SendToAllJoinedChannel(User *user, const std::string& msg)
+{
+	std::map<std::string, Channels *>::iterator it = _channel.begin();
+
+	for (; it != _channel.end(); ++it)
+	{
+		if (it->second->HasUser(user))
+			SendToAllInChannel(it->second, msg);
+	}
+}
+
 void Server::PartUserFromAllChannel(User *user, const std::string& msg)
 {
 	std::map<std::string, Channels *>::iterator it = _channel.begin();

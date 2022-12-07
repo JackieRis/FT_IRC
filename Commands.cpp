@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 11:12:21 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/07 11:24:02 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,11 +99,20 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 	/* This is the re-nick case */
 	if (user->GetRegistered())
 	{
-		_nickToUserLookup.erase(user->GetNick());
+		std::string oldNick = user->GetNick();
+		
+		_nickToUserLookup.erase(oldNick);
 		user->SetNick(input[1]);
 		_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
 		
-		// notify nick change to other users
+		std::stringstream ss;
+		ss << ":" << oldNick << " NICK " << user->GetNick();
+		
+		/* make sure the user receives it, in case they're in no channels */
+		(*io) << ss.str();
+		io->Send();
+
+		SendToAllJoinedChannel(user, ss.str());
 		return ;
 	}
 
