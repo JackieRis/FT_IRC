@@ -31,6 +31,16 @@ public:
 
 	static void R221(NR_ARG, int modes);
 
+	static void R251(NR_ARG, const std::string& infostr);
+	static void R252(NR_ARG, int ops);
+	static void R253(NR_ARG, int unknownConnnections);
+	static void R254(NR_ARG, int channels);
+	static void R255(NR_ARG, const std::string& infostr);
+	static void R265(NR_ARG, int users);
+	static void R266(NR_ARG, int users);
+
+	static void R324(NR_ARG, const std::string& chanName, const std::string& chanModeStr, const std::string& chanModeArgs);
+
 	static void R331(NR_ARG, const std::string& chanName);
 	static void R332(NR_ARG, const std::string& chanName, const std::string& topic);
 	static void R333(NR_ARG, const std::string& chanName, const std::string& setterNick, time_t timestamp);

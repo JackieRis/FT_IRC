@@ -61,6 +61,54 @@ void Rep::R221(SocketIo& io, const std::string& cNick, int modes)
 	io.Send();
 }
 
+void Rep::R251(SocketIo& io, const std::string& cNick, const std::string& infostr)
+{
+	io << "251 " << cNick << " " << infostr;
+	io.Send();
+}
+
+void Rep::R252(SocketIo& io, const std::string& cNick, int ops)
+{
+	io << "252 " << cNick << " " << ops << " :operator(s) online";
+	io.Send();
+}
+
+void Rep::R253(SocketIo& io, const std::string& cNick, int unknownConnnections)
+{
+	io << "253 " << cNick << " " << unknownConnnections << " :unknown connection(s)";
+	io.Send();
+}
+
+void Rep::R254(SocketIo& io, const std::string& cNick, int channels)
+{
+	io << "254 " << cNick << " " << channels << " :channel(s) currently open";
+	io.Send();
+}
+
+void Rep::R255(SocketIo& io, const std::string& cNick, const std::string& infostr)
+{
+	io << "255 " << cNick << " " << infostr;
+	io.Send();
+}
+
+void Rep::R265(SocketIo& io, const std::string& cNick, int users)
+{
+	io << "265 " << users << " 1024 :Current local users " << users << ", max 1024";
+	io.Send();
+}
+
+void Rep::R266(SocketIo& io, const std::string& cNick, int users)
+{
+	io << "266 " << users << " 1024 :Current global users " << users << ", max 1024";
+	io.Send();
+}
+
+void Rep::R324(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& chanModeStr, const std::string& chanModeArgs)
+{
+	io << "324 " << cNick << " " << chanName << " " << chanModeStr << " " << chanModeArgs;
+	io.Send();
+}
+
 void Rep::R331(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
 	io << "331 " << cNick << " " << chanName << " :No topic set";

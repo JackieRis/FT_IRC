@@ -14,7 +14,7 @@
 
 User::User() {}
 
-User::User(in_addr_t ip, int fd) :  _fd(fd), IpAddress(ip) {}
+User::User(in_addr_t ip, int fd) :  _fd(fd), IpAddress(ip) {_Nick = "*"}
 
 User::~User() {}
 

@@ -448,7 +448,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
-	//Channels	*chan; /* Get the pointer later */
+	Channels	*chan; /* Get the pointer later */
 
 	_cmdsCalled["MODE"]++;
 	if (!user->GetRegistered())
@@ -478,7 +478,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 		}
 		if (input.size() < 3)
 		{
-			/* MODE user query */
+			/* MODE user query NEED FIX*/
 			Rep::R221(NR_IN, user->GetMode());
 			return ;
 		}
@@ -493,14 +493,15 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 		return ;
 	}
 
+	chan = _channel[input[1]];
+
 	if (input.size() < 3)
 	{
 		/* MODE channel query */
-		//Rep::R221(NR_IN, user->GetMode());
+		return ; /* DEBUG DON'T REPLY TO THE CLIENT YET AS CHANNEL QUERY ISN'T PROPERLY IMPLEMENTED YET */
+		Rep::R324(NR_IN, chan->GetMode(), "l", "10");
 		return ;
 	}
-
-	//chan = _channel[input[1]];
 }
 
 void Server::cmdTopic(const std::vector<std::string>& input, int fd)
@@ -695,6 +696,39 @@ void Server::cmdNames(const std::vector<std::string>& input, int fd)
 	}
 }
 
+void Server::cmdLusers(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+
+	_cmdsCalled["LUSERS"]++;
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+
+	int clientNb = _user.size();
+	int invisibleNb = 0; /* query later */
+	int	opped = 0; /* query later */
+
+	std::stringstream ss;
+
+	ss << ":There are " << clientNb << " users and " << invisibleNb << " invisible on 1 server(s)";
+
+	Rep::R251(NR_IN, ss.str());
+	Rep::R252(NR_IN, opped);
+	Rep::R253(NR_IN, 0);
+	Rep::R254(NR_IN, _channel.size());
+
+	ss = std::stringstream(); 
+	ss << ":I have " << clientNb << " clients and 0 servers";
+
+	Rep::R255(NR_IN, const std::string& infostr);
+	Rep::R265(NR_IN, clientNb);
+	Rep::R266(NR_IN, clientNb);
+}
+
 void Server::cmdPart(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
@@ -856,6 +890,8 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("STATS"), 0));
 	_cmds.insert(std::make_pair(std::string("NAMES"), &Server::cmdNames));
 	_cmdsCalled.insert(std::make_pair(std::string("NAMES"), 0));
+	_cmds.insert(std::make_pair(std::string("LUSERS"), &Server::cmdLusers));
+	_cmdsCalled.insert(std::make_pair(std::string("LUSERS"), 0));
 	_cmds.insert(std::make_pair(std::string("INVITE"), &Server::cmdInvite));
 	_cmdsCalled.insert(std::make_pair(std::string("INVITE"), 0));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));
