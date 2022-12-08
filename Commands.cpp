@@ -648,6 +648,58 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 	Rep::R219(NR_IN, toDo);
 }
 
+void Server::cmdNames(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+	Channels	*chan; /* Get the pointer later */
+
+	_cmdsCalled["NAMES"]++;
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+
+	if (input.size() < 2)
+	{
+		Rep::E461(NR_IN, input[0]);
+		return ;
+	}
+
+	const std::vector<std::string> chanList = Utils::ToList(input[1]);
+	std::vector<std::string>::const_iterator it = chanList.begin();
+
+	for (; it != chanList.end(); ++it)
+	{
+		if (!_channel.count(*it)) /* Channel doesn't exist */
+		{
+			Rep::R366(NR_IN, *it);
+			continue ;
+		}
+
+		chan = _channel[*it];
+		bool isOnChannel = chan->HasUser(user);
+
+		if (chan->GetModes & CM_SECRET && !isOnChannel) /* Channel is secret and user isn't part of it */
+		{
+			Rep::R366(NR_IN, chan->GetName());
+			continue ;
+		}
+
+		const std::set<User *>& chanUsers = chan->GetUsers();
+		std::set<User *>::const_iterator uit = chanUsers.begin();
+
+		for (; uit != chanUsers.end(); ++uit)
+		{
+			if (!isOnChannel && ((*uit)->GetMode() & UM_INVISIBLE)) /* Querying user is not on channel and this specific user is invisible ? don't list */
+				continue ;
+			Rep::R353(NR_IN, chan->GetName(), (*uit)->GetNick(), chan->GetChanPrefix(), chan->GetUserPrefix(*uit));
+		}
+		Rep::R366(NR_IN, chan->GetName());
+	}
+}
+
 void Server::cmdPart(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
@@ -757,6 +809,8 @@ void	Server::cmdInvite(const std::vector<std::string>& input, int fd)
 
 	(*otherIo) << ":" << user->GetNick() << " INVITE " << otherUser->GetNick() << " " << chan->GetName();
 	otherIo->Send();
+
+	/* Invite does not notify other channel users of this user's arrival  */
 }
 
 void	Server::cmdOper(const std::vector<std::string>& input, int fd)
@@ -805,6 +859,8 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("TIME"), 0));
 	_cmds.insert(std::make_pair(std::string("STATS"), &Server::cmdStats));
 	_cmdsCalled.insert(std::make_pair(std::string("STATS"), 0));
+	_cmds.insert(std::make_pair(std::string("NAMES"), &Server::cmdNames));
+	_cmdsCalled.insert(std::make_pair(std::string("NAMES"), 0));
 	_cmds.insert(std::make_pair(std::string("INVITE"), &Server::cmdInvite));
 	_cmdsCalled.insert(std::make_pair(std::string("INVITE"), 0));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));

@@ -88,6 +88,7 @@ protected:
 	void	cmdTopic(const std::vector<std::string>& input, int fd);
 	void	cmdTime(const std::vector<std::string>& input, int fd);
 	void	cmdStats(const std::vector<std::string>& input, int fd);
+	void	cmdNames(const std::vector<std::string>& input, int fd);
 
 	// Communication
 	int		checkChan(std::string name); /* ALED PAS ICI */
