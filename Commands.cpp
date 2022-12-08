@@ -191,7 +191,7 @@ void Server::cmdPing(const std::vector<std::string>& input, int fd)
 	}
 	if (input.size() < 2)
 	{
-		//idk what to put
+		Rep::E461(NR_IN, input[0]);
 		return ;
 	}
 
