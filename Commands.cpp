@@ -604,7 +604,7 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 	}
 	if (input[1].find('m') != std::string::npos)
 	{
-		std::map<std:string, int>::iterator it = _cmdsCalled.begin();
+		std::map<std::string, int>::iterator it = _cmdsCalled.begin();
 		for (; it != _cmdsCalled.end(); ++it)
 		{
 			std::stringstream ss;
@@ -680,6 +680,18 @@ void Server::cmdPart(const std::vector<std::string>& input, int fd)
 	removeAllChannels(true);
 }
 
+void	Server::cmdOper(const std::vector<std::string>& input, int fd)
+{
+	SocketIo*	io = _io[fd];
+	User		*user = _user[fd];
+
+	if (input.size() != 3)
+	{
+		Rep::E461(*io, user->GetNick(), "OPER");
+		return ;
+	}
+}
+
 /* 
 	We're using a map as a lookup to member function
 */
@@ -699,6 +711,8 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("PING"), 0));
 	_cmds.insert(std::make_pair(std::string("PONG"), &Server::cmdPong));
 	_cmdsCalled.insert(std::make_pair(std::string("PONG"), 0));
+	_cmds.insert(std::make_pair(std::string("OPER"), &Server::cmdOper));
+	_cmdsCalled.insert(std::make_pair(std::string("OPER"), 0));
 	_cmds.insert(std::make_pair(std::string("JOIN"), &Server::cmdJoin));
 	_cmdsCalled.insert(std::make_pair(std::string("JOIN"), 0));
 	_cmds.insert(std::make_pair(std::string("PRIVMSG"), &Server::cmdPrivmsg));

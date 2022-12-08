@@ -94,6 +94,7 @@ protected:
 	void	cmdPrivmsg(const std::vector<std::string>& input, int fd);
 	void	cmdNotice(const std::vector<std::string>& input, int fd);
 	void	cmdPart(const std::vector<std::string>& input, int fd);
+	void	cmdOper(const std::vector<std::string>& input, int fd);
 
 	void	initCmds();
 
