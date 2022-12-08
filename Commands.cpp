@@ -310,11 +310,6 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
 			Rep::R353(NR_IN, chan->GetName(), (*uit)->GetNick(), chan->GetChanPrefix(), chan->GetUserPrefix((*uit)));
 		Rep::R366(NR_IN, chan->GetName());
-
-		if (creator)
-		{
-			// give op and notify
-		}
 	}
 }
 
