@@ -448,7 +448,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
-	Channels	*chan; /* Get the pointer later */
+	//Channels	*chan; /* Get the pointer later */
 
 	_cmdsCalled["MODE"]++;
 	if (!user->GetRegistered())
@@ -493,13 +493,13 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 		return ;
 	}
 
-	chan = _channel[input[1]];
+	//chan = _channel[input[1]];
 
 	if (input.size() < 3)
 	{
 		/* MODE channel query */
 		return ; /* DEBUG DON'T REPLY TO THE CLIENT YET AS CHANNEL QUERY ISN'T PROPERLY IMPLEMENTED YET */
-		Rep::R324(NR_IN, chan->GetMode(), "l", "10");
+		//Rep::R324(NR_IN, chan->GetModes(), "l", "10");
 		return ;
 	}
 }
@@ -677,7 +677,7 @@ void Server::cmdNames(const std::vector<std::string>& input, int fd)
 		chan = _channel[*it];
 		bool isOnChannel = chan->HasUser(user);
 
-		if (chan->GetModes & CM_SECRET && !isOnChannel) /* Channel is secret and user isn't part of it */
+		if (chan->GetModes() & CM_SECRET && !isOnChannel) /* Channel is secret and user isn't part of it */
 		{
 			Rep::R366(NR_IN, chan->GetName());
 			continue ;
@@ -700,6 +700,7 @@ void Server::cmdLusers(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
+	(void)input;
 
 	_cmdsCalled["LUSERS"]++;
 	if (!user->GetRegistered())
@@ -724,7 +725,7 @@ void Server::cmdLusers(const std::vector<std::string>& input, int fd)
 	ss = std::stringstream(); 
 	ss << ":I have " << clientNb << " clients and 0 servers";
 
-	Rep::R255(NR_IN, const std::string& infostr);
+	Rep::R255(NR_IN, ss.str());
 	Rep::R265(NR_IN, clientNb);
 	Rep::R266(NR_IN, clientNb);
 }

@@ -61,7 +61,7 @@ class Channels
 	int								GetModes() const;
 	bool							HasUser(User *user) const;
 	bool							IsBanned(User *user) const;
-	bool							IsOpped(User *user) const
+	bool							IsOpped(User *user) const;
 	bool							ValidateKey(const std::string& userKey) const;
 	//const std::vector<int>			GetUserFd() const;
 	const std::string&				GetTopic() const;
