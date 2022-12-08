@@ -604,25 +604,34 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 	}
 	if (input[1].find('m') != std::string::npos)
 	{
-		std::stringstream ss;
+		std::map<std:string, int>::iterator it = _cmdsCalled.begin();
+		for (; it != _cmdsCalled.end(); ++it)
+		{
+			std::stringstream ss;
 
-		// for each cmd in _cmdsCalled
-		// cmd count 0 0 // code 0 0 inside the reply instead
-		Rep::R212(NR_IN, ss.str());
+			ss << it->first << " " << it->second;
+			Rep::R212(NR_IN, ss.str());
+		}
 		toDo += 'm';
 	}
 	if (input[1].find('o') != std::string::npos)
 	{
-		std::stringstream ss;
-
-		Rep::R243(NR_IN, ss.str());
+		/* may put the server ip in first, later*/
+		Rep::R243(NR_IN, "O * * *");
 		toDo += 'o';
 	}
 	if (input[1].find('u') != std::string::npos)
 	{
-		std::stringstream ss;
+		time_t uptime = time(0) - _startupTimestamp;
+		char buffer[128];
 
-		Rep::R242(NR_IN, ss.str());
+		snprintf(buffer, 128, "Server Up %d days %d:%02d:%02d",
+				(int)(uptime / (3600 * 24)),
+				(int)(uptime / 3600) % 24,
+				(int)(uptime / 60) % 60,
+				(int)(uptime % 60));
+
+		Rep::R242(NR_IN, std::string(buffer));
 		toDo += 'u';
 	}
 
