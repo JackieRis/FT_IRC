@@ -690,11 +690,81 @@ void Server::cmdPart(const std::vector<std::string>& input, int fd)
 	removeAllChannels(true);
 }
 
+void	Server::cmdInvite(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+	Channels	*chan; /* Get the pointer later */
+
+	_cmdsCalled["INVITE"]++;
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+	if (input.size() < 3)
+	{
+		Rep::E461(NR_IN, input[0]);
+		return ;
+	}
+
+	if (_channel.count(input[2]) == 0)
+	{
+		Rep::E403(NR_IN, input[2]);
+		return ;
+	}
+
+	chan = _channel[input[2]];
+
+	if (!chan->HasUser(user))
+	{
+		Rep::E442(NR_IN, chan->GetName());
+		return ;
+	}
+
+	if (chan->GetModes() & CM_INVITEONLY)
+	{
+		/* Documentation recommands to make InviteOnly channels require op to INVITE */
+		if (!chan->IsOpped(user))
+		{
+			Rep::E482(NR_IN, chan->GetName());
+			return ;
+		}
+	}
+
+	if (_nickToUserLookup.count(input[1]) == 0)
+	{
+		/* Invited user doesn't exist */
+		Rep::E401(NR_IN, input[1]);
+		return ;
+	}
+
+	User		*otherUser = _nickToUserLookup[input[1]];
+
+	if (chan->HasUser(otherUser))
+	{
+		Rep::E443(NR_IN, chan->GetName(), otherUser->GetNick());
+		return ;
+	}
+
+	/* Every checks have been done, invite the user over */
+
+	SocketIo	*otherIo = _userToIoLookup[otherUser];
+
+	chan->AddUser(otherUser);
+
+	Rep::R341(NR_IN, otherUser->GetNick(), chan->GetName());
+
+	(*otherIo) << ":" << user->GetNick() << " INVITE " << otherUser->GetNick() << " " << chan->GetName();
+	otherIo->Send();
+}
+
 void	Server::cmdOper(const std::vector<std::string>& input, int fd)
 {
 	SocketIo*	io = _io[fd];
 	User		*user = _user[fd];
 
+	_cmdsCalled["OPER"]++;
 	if (input.size() != 3)
 	{
 		Rep::E461(*io, user->GetNick(), "OPER");
@@ -735,6 +805,8 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("TIME"), 0));
 	_cmds.insert(std::make_pair(std::string("STATS"), &Server::cmdStats));
 	_cmdsCalled.insert(std::make_pair(std::string("STATS"), 0));
+	_cmds.insert(std::make_pair(std::string("INVITE"), &Server::cmdInvite));
+	_cmdsCalled.insert(std::make_pair(std::string("INVITE"), 0));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));
 	_cmdsCalled.insert(std::make_pair(std::string("PART"), 0));
 }

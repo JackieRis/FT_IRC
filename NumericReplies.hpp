@@ -35,6 +35,8 @@ public:
 	static void R332(NR_ARG, const std::string& chanName, const std::string& topic);
 	static void R333(NR_ARG, const std::string& chanName, const std::string& setterNick, time_t timestamp);
 
+	static void R341(NR_ARG, const std::string& otherNick, const std::string& chanName);
+
 	static void R353(NR_ARG, const std::string& chanName, const std::string& nick, char chanPrefix, char userPrefix);
 	static void R366(NR_ARG, const std::string& chanName);
 
