@@ -8,9 +8,9 @@ void Rep::R001(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
-void Rep::R002(SocketIo& io, const std::string& cNick)
+void Rep::R002(SocketIo& io, const std::string& cNick, const std::string& servName, const std::string &servVersion)
 {
-	io << "002 " << cNick << " :Your host is 42ircserv, running version 1.0 ";
+	io << "002 " << cNick << " :Your host is " << servName << ", running version " << servVersion;
 	io.Send();
 }
 
@@ -193,7 +193,7 @@ void Rep::E465(SocketIo& io, const std::string& cNick)
 
 void Rep::E471(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
-	io << "471 " << cNick << " " << chanName << ":Cannot join channel (+l)";
+	io << "471 " << cNick << " " << chanName << " :Cannot join channel (+l)";
 	io.Send();
 }
 
@@ -205,25 +205,31 @@ void Rep::E472(SocketIo& io, const std::string& cNick, const std::string& modeCh
 
 void Rep::E473(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
-	io << "473 " << cNick << " " << chanName << ":Cannot join channel (+i)";
+	io << "473 " << cNick << " " << chanName << " :Cannot join channel (+i)";
 	io.Send();
 }
 
 void Rep::E474(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
-	io << "474 " << cNick << " " << chanName << ":Cannot join channel (+b)";
+	io << "474 " << cNick << " " << chanName << " :Cannot join channel (+b)";
 	io.Send();
 }
 
 void Rep::E475(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
-	io << "475 " << cNick << " " << chanName << ":Cannot join channel (+k)";
+	io << "475 " << cNick << " " << chanName << " :Cannot join channel (+k)";
 	io.Send();
 }
 
 void Rep::E476(SocketIo& io, const std::string& cNick)
 {
 	io << "476 " << cNick << " :Bad Channel Mask";
+	io.Send();
+}
+
+void Rep::E482(SocketIo& io, const std::string& cNick, const std::string& chanName)
+{
+	io << "482 " << cNick << " " << chanName << " :You're not channel operator";
 	io.Send();
 }
 

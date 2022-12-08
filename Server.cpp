@@ -49,7 +49,7 @@ void Server::welcomeUser(int fd)
 
 	user->SetRegistered(true);
 	Rep::R001(NR_IN);
-	Rep::R002(NR_IN);
+	Rep::R002(NR_IN, _servName, "1.0");
 	Rep::R003(NR_IN, "12/04/2022 13:30"); // use the server timestamp to generate a date
 	Rep::R004(NR_IN);
 	_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
@@ -195,6 +195,8 @@ void Server::manageClient(int fd)
 
 int	Server::init()
 {
+	_servName = "42ircserv";
+
 	int	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1)
 	{

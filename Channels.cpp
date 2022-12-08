@@ -110,6 +110,11 @@ bool	Channels::IsBanned(User *user) const
 	return (banned.count(user));
 }
 
+bool	Channels::IsOpped(User *user) const
+{
+	return (opped.count(user));
+}
+
 bool	Channels::ValidateKey(const std::string& userKey) const
 {
 	return (userKey == key);

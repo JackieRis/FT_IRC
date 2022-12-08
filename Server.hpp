@@ -48,6 +48,7 @@ protected:
 	int									_port;
 	std::string							_password;
 	time_t								_startupTimestamp;
+	std::string							_servName;
 
 	/*
 		Command handlers

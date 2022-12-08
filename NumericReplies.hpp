@@ -19,7 +19,7 @@ class Rep
 public:
 	/* Replies */
 	static void R001(NR_ARG);
-	static void R002(NR_ARG); /* hardcoding name and version */
+	static void R002(NR_ARG, const std::string& servName, const std::string &servVersion);
 	static void R003(NR_ARG, const std::string& date);
 	static void R004(NR_ARG);
 
@@ -68,6 +68,8 @@ public:
 	static void E475(NR_ARG, const std::string& chanName);
 	/* For some ungodly reason, ERR_BADCHANMASK doesn't take the user nick as input, still needs a string tho so it's fine */
 	static void E476(NR_ARG);
+
+	static void E482(NR_ARG, const std::string& chanName);
 
 	static void E502(NR_ARG);
 };

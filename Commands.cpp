@@ -554,7 +554,16 @@ void Server::cmdTopic(const std::vector<std::string>& input, int fd)
 	}
 
 	/* Topic Change */
-	// check permissions before allowing
+	if (chan->GetModes() & CM_PROTECTEDTOPIC)
+	{
+		/* Chan explicitely requires channel permissions to change topic */
+		if (!chan->IsOpped(user))
+		{
+			Rep::E482(NR_IN, chan->GetName());
+			return ;
+		}
+	}
+
 	std::string topic = input[2].substr((input[2][0] == ':'));
 
 	chan->SetTopic(topic, user->GetNick());
@@ -594,7 +603,7 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 	{
 		std::stringstream ss;
 
-		ss << "42ircserv 0 ";
+		ss << _servName << " 0 ";
 		ss << SocketIo::sentMsg << " " << (SocketIo::sentkb / 1024) << " ";
 		ss << SocketIo::recvMsg << " " << (SocketIo::recvkb / 1024) << " ";
 		ss << (time(0) - _startupTimestamp);
@@ -625,7 +634,8 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 		time_t uptime = time(0) - _startupTimestamp;
 		char buffer[128];
 
-		snprintf(buffer, 128, "Server Up %d days %d:%02d:%02d",
+		/* This is a LOT more convenient than using std::cout with <iomanip>, pardon my C */
+		snprintf(buffer, 128, "Server Up for %d days and %d:%02d:%02d",
 				(int)(uptime / (3600 * 24)),
 				(int)(uptime / 3600) % 24,
 				(int)(uptime / 60) % 60,
