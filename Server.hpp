@@ -14,7 +14,7 @@
 # define SERVER_HPP
 
 # define BUFFER_SIZE 4096
-# define MAX_CLIENT 1024
+# define MAX_CLIENT 1000
 
 # include <algorithm>
 # include "User.hpp"

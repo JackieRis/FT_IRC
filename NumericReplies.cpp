@@ -1,5 +1,7 @@
 #include "NumericReplies.hpp"
 
+# define MAXCLIENTS 1000
+
 /* Replies */
 
 void Rep::R001(SocketIo& io, const std::string& cNick)
@@ -93,13 +95,13 @@ void Rep::R255(SocketIo& io, const std::string& cNick, const std::string& infost
 
 void Rep::R265(SocketIo& io, const std::string& cNick, int users)
 {
-	io << "265 " << cNick << " " << users << " 1024 :Current local users " << users << ", max 1024";
+	io << "265 " << cNick << " " << users << " " << MAXCLIENTS <<" :Current local users " << users << ", max " << MAXCLIENTS;
 	io.Send();
 }
 
 void Rep::R266(SocketIo& io, const std::string& cNick, int users)
 {
-	io << "266 " << cNick << " " << users << " 1024 :Current global users " << users << ", max 1024";
+	io << "266 " << cNick << " " << users << " " << MAXCLIENTS <<" :Current global users " << users << ", max " << MAXCLIENTS;
 	io.Send();
 }
 
