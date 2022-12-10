@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/10 15:27:35 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:34:17 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,7 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 
 	user->SetNick(input[1]);
 	user->SetDidNick(true);
+	_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
 	
 	if (user->GetDidUser())
 		welcomeUser(fd);

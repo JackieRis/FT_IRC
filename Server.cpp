@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:48:58 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/07 10:01:25 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:34:54 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void Server::welcomeUser(int fd)
 	Rep::R002(NR_IN, _servName, "1.0");
 	Rep::R003(NR_IN, "12/04/2022 13:30"); // use the server timestamp to generate a date
 	Rep::R004(NR_IN);
-	_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
+	//_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
 }
 
 void Server::removeAllChannels(bool emptyOnly)
@@ -108,8 +108,7 @@ void	Server::disconnectClient(int fd)
 			User		*user = _user[fd];
 			SocketIo	*io = _io[fd];
 
-			if (user->GetRegistered())
-				_nickToUserLookup.erase(user->GetNick());
+			_nickToUserLookup.erase(user->GetNick());
 			_userToIoLookup.erase(user);
 			_io.erase(fd);
 			_user.erase(fd);
