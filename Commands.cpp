@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 16:58:24 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:00:00 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -565,7 +565,7 @@ void Server::cmdTopic(const std::vector<std::string>& input, int fd)
 	chan->SetTopic(topic, user->GetNick());
 
 	std::stringstream ss;
-	ss << "TOPIC " << chan->GetName() << " :" << chan->GetTopic();
+	ss << ":" << user->GetNick() << " TOPIC " << chan->GetName() << " :" << chan->GetTopic();
 	
 	SendToAllInChannel(chan, ss.str());
 }
@@ -722,7 +722,8 @@ void Server::cmdLusers(const std::vector<std::string>& input, int fd)
 	Rep::R253(NR_IN, 0);
 	Rep::R254(NR_IN, _channel.size());
 
-	ss = std::stringstream(); 
+	ss.str("");
+	ss.clear();
 	ss << ":I have " << clientNb << " clients and 0 servers";
 
 	Rep::R255(NR_IN, ss.str());
@@ -881,6 +882,8 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("JOIN"), 0));
 	_cmds.insert(std::make_pair(std::string("PRIVMSG"), &Server::cmdPrivmsg));
 	_cmdsCalled.insert(std::make_pair(std::string("PRIVMSG"), 0));
+	_cmds.insert(std::make_pair(std::string("NOTICE"), &Server::cmdNotice));
+	_cmdsCalled.insert(std::make_pair(std::string("NOTICE"), 0));
 	_cmds.insert(std::make_pair(std::string("MODE"), &Server::cmdMode));
 	_cmdsCalled.insert(std::make_pair(std::string("MODE"), 0));
 	_cmds.insert(std::make_pair(std::string("TOPIC"), &Server::cmdTopic));

@@ -32,28 +32,28 @@ void Rep::R004(SocketIo& io, const std::string& cNick)
 
 void Rep::R211(SocketIo& io, const std::string& cNick, const std::string& infostr)
 {
-	io << "221 " << cNick << " " << infostr;
+	io << "211 " << cNick << " " << infostr;
 	io.Send();
 }
 
 void Rep::R212(SocketIo& io, const std::string& cNick, const std::string& infostr)
 {
-	io << "221 " << cNick << " " << infostr << " 0 0";
+	io << "212 " << cNick << " " << infostr << " 0 0";
 	io.Send();
 }
 void Rep::R219(SocketIo& io, const std::string& cNick, const std::string& letters)
 {
-	io << "221 " << cNick << " " << letters << " :End of STATS report";
+	io << "219 " << cNick << " " << letters << " :End of STATS report";
 	io.Send();
 }
 void Rep::R242(SocketIo& io, const std::string& cNick, const std::string& infostr)
 {
-	io << "221 " << cNick << " :" << infostr;
+	io << "242 " << cNick << " :" << infostr;
 	io.Send();
 }
 void Rep::R243(SocketIo& io, const std::string& cNick, const std::string& infostr)
 {
-	io << "221 " << cNick << " " << infostr;
+	io << "243 " << cNick << " " << infostr;
 	io.Send();
 }
 
