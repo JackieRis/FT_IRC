@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:43 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 10:54:18 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:15:47 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,17 +79,26 @@ std::vector<std::string>	Utils::ToList(const std::string& input)
 	return (res);
 }
 
-int	Utils::checkNick(std::string input)
+bool	Utils::IsValidNick(const std::string& input)
 {
-	if (!(input.find(' ') == std::string::npos || input.find(',') == std::string::npos || input.find('*') == std::string::npos 
-		|| input.find('?') == std::string::npos || input.find('!') == std::string::npos || input.find('@') == std::string::npos \
-		|| input.find('#') == std::string::npos || input.find('%') == std::string::npos || input.find(':') == std::string::npos \
-		|| input.find('$') == std::string::npos || input.find('.') == std::string::npos))
-		return (-1);
-	return (0);
+	const std::string badChar(" ,*?!@#%:$.");
+
+	for (std::string::const_iterator it = badChar.begin(); it != badChar.end(); ++it)
+	{
+		if (input.find(*it) != std::string::npos)
+			return (false);
+	}
+	return (true);
 }
 
 bool	Utils::IsChannel(const std::string& target)
 {
 	return (target[0] == '#' || target[0] == '&');
+}
+
+bool Utils::IsValidChannelName(const std::string& target)
+{
+	if (!IsChannel(target))
+		return (false);
+	return (target.find(0x07) == std::string::npos); /* Not found, returns true */
 }

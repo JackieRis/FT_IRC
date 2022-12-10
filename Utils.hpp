@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:13 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 10:53:47 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:11:44 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,20 @@ public:
 	*/
 	static std::vector<std::string>	ToList(const std::string& input);
 
-	static int	checkNick(std::string input);
+	/*
+		Checks if the provided nick is valid
+	*/
+	static bool	IsValidNick(const std::string& input);
 
 	/*
 		Checks the first character to identify if target is a channel
 	*/
 	static bool	IsChannel(const std::string& target);
+
+	/*
+		Check if the channel name is valid and not ill formatted
+	*/
+	static bool IsValidChannelName(const std::string& target);
 };
 
 # endif

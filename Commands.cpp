@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/10 15:00:00 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:18:20 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,20 +91,12 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 		return ;
 	}
 
-	// check if nick is valid
-
-	if (user->GetRegistered() && Utils::checkNick(input[2]) == -1)
+	if (!Utils::IsValidNick(input[1]))
 	{
-		Rep::E432(NR_IN, input[2]);
-		return ;
-	}
-	if (Utils::checkNick(input[1]) == -1)
-	{
-		Rep::E432((*io), "*", input[1]);
+		Rep::E432(NR_IN, input[1]);
 		return ;
 	}
 	
-
 	/* This is the re-nick case */
 	if (user->GetRegistered())
 	{
@@ -244,9 +236,9 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 
 	for (; it != lst.end(); ++it, ++n)
 	{
-		if (!Utils::IsChannel(*it))
+		if (!Utils::IsValidChannelName(*it))
 		{
-			Rep::E476(*io, *it);
+			Rep::E476(*io, *it); /* Don't use NR_IN here ! */
 			return ;
 		}
 		// check if channel exist or can be created, validate channel name
