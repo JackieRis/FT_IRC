@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 15:20:57 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:20:38 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Channels
 	std::string topic;
 	std::string lastTopicEditor;
 	time_t		lastTopicChangeDate;
+	time_t		channelCreationDate;
 
 	std::set<User *> users;
 	std::set<User *> opped;

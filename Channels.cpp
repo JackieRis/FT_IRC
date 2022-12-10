@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 15:30:25 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:20:53 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ Channels::Channels(const std::string& chanName, User *firstUser) : channelName(c
 	opped.insert(firstUser);
 	prefix.insert(std::make_pair(firstUser, '@'));
 
+	channelCreationDate = time(0);
+
 	lastTopicEditor = firstUser->GetNick();
-	lastTopicChangeDate = time(0);
+	lastTopicChangeDate = channelCreationDate;
 
 	std::cerr << "Channel " << chanName << " created" << std::endl;
 }

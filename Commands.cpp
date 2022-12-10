@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/10 15:18:20 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:27:35 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -702,8 +702,15 @@ void Server::cmdLusers(const std::vector<std::string>& input, int fd)
 	}
 
 	int clientNb = _user.size();
-	int invisibleNb = 0; /* query later */
-	int	opped = 0; /* query later */
+	int invisibleNb = 0;
+	int	opped = 0;
+
+	std::map<int, User *>::const_iterator it = _user.begin();
+	for (; it != _user.end(); ++it)
+	{
+		invisibleNb += (it->second->GetMode() & UM_INVISIBLE);
+		opped += ((it->second->GetMode() & UM_OPER) || (it->second->GetMode() & UM_LOPER));
+	}
 
 	std::stringstream ss;
 
