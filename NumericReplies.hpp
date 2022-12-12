@@ -50,6 +50,10 @@ public:
 	static void R353(NR_ARG, const std::string& chanName, const std::string& nick, char chanPrefix, char userPrefix);
 	static void R366(NR_ARG, const std::string& chanName);
 
+	static void	R375(NR_ARG, const std::string& serverName);
+	static void	R372(NR_ARG, const std::string& Motd);
+	static void	R376(NR_ARG);
+
 	static void R381(NR_ARG);
 
 	static void R391(NR_ARG);
@@ -63,6 +67,8 @@ public:
 	static void E412(NR_ARG);
 
 	static void E421(NR_ARG, const std::string& cmd);
+
+	static void E422(NR_ARG);
 
 	static void E431(NR_ARG);
 	static void E432(NR_ARG, const std::string& badNick);

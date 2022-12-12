@@ -150,6 +150,24 @@ void Rep::R366(SocketIo& io, const std::string& cNick, const std::string& chanNa
 	io.Send();
 }
 
+void	Rep::R372(SocketIo& io, const std::string& cNick, const std::string& Motd)
+{
+	io << "372 " << cNick << " :" << Motd;
+	io.Send();
+}
+
+void	Rep::R375(SocketIo& io, const std::string& cNick, const std::string& serverName)
+{
+	io << "375 " << cNick << " :- " << serverName << " Message of the day - ";
+	io.Send();
+}
+
+void	Rep::R376(SocketIo& io, const std::string& cNick)
+{
+	io << "376 " << cNick << " :End of /MOTD command.";
+	io.Send();
+}
+
 void	Rep::R381(SocketIo& io, const std::string& cNick)
 {
 	io << "381 " << cNick << " " << " :You are now an IRC operator";
@@ -196,6 +214,12 @@ void Rep::E412(SocketIo& io, const std::string& cNick)
 void Rep::E421(SocketIo& io, const std::string& cNick, const std::string& cmd)
 {
 	io << "421 " << cNick << " " << cmd << " :Unknown command";
+	io.Send();
+}
+
+void	Rep::E422(SocketIo& io, const std::string& cNick)
+{
+	io << "422 " << cNick << " :No MOTD in config File";
 	io.Send();
 }
 

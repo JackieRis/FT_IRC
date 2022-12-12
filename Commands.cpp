@@ -742,6 +742,24 @@ void Server::cmdLusers(const std::vector<std::string>& input, int fd)
 	Rep::R266(NR_IN, clientNb);
 }
 
+void	Server::cmdMotd(const std::vector<std::string>& input, int fd)
+{
+	(void)input;
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+	std::map<std::string, std::string>::iterator	Name = _cfg.servConfig.find("name");
+	std::map<std::string, std::string>::iterator	Motd = _cfg.servConfig.find("motd");
+
+	if (Motd != _cfg.servConfig.end())
+	{
+		Rep::R375(NR_IN, Name->second);
+		Rep::R372(NR_IN, Motd->second);
+		Rep::R376(NR_IN);
+		return ;
+	}
+	Rep::E422(NR_IN);
+}
+
 void Server::cmdPart(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
@@ -923,4 +941,6 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("INVITE"), 0));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));
 	_cmdsCalled.insert(std::make_pair(std::string("PART"), 0));
+	_cmds.insert(std::make_pair(std::string("MOTD"), &Server::cmdMotd));
+	_cmdsCalled.insert(std::make_pair(std::string("MOTD"), 0));
 }
