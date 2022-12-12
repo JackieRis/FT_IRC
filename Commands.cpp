@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/10 15:34:17 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 11:46:58 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,7 +281,6 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 			chan->AddUser(user);
 		}
 
-		/* I hate this I need to change this for later */
 		const std::set<User *>& usrList = chan->GetUsers();
 
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
@@ -307,7 +306,7 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 }
 
 /* Parameters: <target>{,<target>} <text to be sent> */
-
+/*
 int	Server::checkChan(std::string name)
 {
 	if (name[0] == '#')
@@ -325,26 +324,50 @@ int	Server::checkChan(std::string name)
 		return (3);
 	}
 	return (0);
-}
+}*/
 
 void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 {
+	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
 
 	_cmdsCalled["PRIVMSG"]++;
-	std::cerr << input[input.size() - 1] << std::endl;
 
-	if (_user[fd]->GetRegistered() == false)
+	if (!user->GetRegistered())
 	{
-		Rep::E451(*io, _user[fd]->GetNick());
+		Rep::E451(NR_IN);
+		return ;
+	}
+	if (input.size() < 2)
+	{
+		Rep::E411(NR_IN, input[0]); /* ERR_NORECIPIENT instead of the usual not enough arg */
 		return ;
 	}
 	if (input.size() < 3)
 	{
-		Rep::E421(*io, _user[fd]->GetNick(), input[0]);
+		Rep::E412(NR_IN); /* ERR_NOTEXTTOSEND */
 		return ;
 	}
-	int	i = checkChan(input[1]);
+
+	/* 
+		What to fix:
+		Currently, you check if the first argument is a channel, and then work on sending the message
+		if the first target is a user, you send the message to everyone in the list
+		It's kind of a mess tho
+
+		The issue: this could be the target list: "#chien,aberneli,#fromage,#limace,corobizar"
+		in this case, you will only send the message to #chien and nowhere else
+
+		remove the switch, don't bother with checkChan, just use Utils::IsChan() instead
+		for each target (splitted with Utils::ToList(input[1]) ) , check if chan, and send input[2] (the message) accordingly
+
+		I also changed ChanMsg to make it cleaner, usage should be even easier now
+
+		when this is done, copy this over to NOTICE and remove the error replies
+		I'll come check later for a few edgecases with banned users and things of the likes
+	*/
+	
+	int	i = 1; //checkChan(input[1]);
 	switch (i)
 	{
 	case 3:
@@ -356,13 +379,13 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 			std::map<std::string, Channels *>::iterator	Sit = _channel.find(input[1]);
 			if (Sit != _channel.end())
 			{
-				ChanMsg(fd, input[2], Sit->second);
+				ChanMsg(user, input[2], Sit->second);
 				return ;
 			}
 			break ;
 		}
 	case -1:
-		Rep::E404(*io, _user[fd]->GetNick(), input[1]);
+		Rep::E404(NR_IN, input[1]);
 		return ;
 		break ;
 	default:
@@ -391,13 +414,19 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 /* /NOTICE <msgTarget>, <text> */
 void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 {
-	std::vector<std::string>	tmp = Utils::ToList(input[1]);
-	std::vector<std::string>::iterator	it = tmp.begin();
+	User		*user = _user[fd];
+	//SocketIo	*io = _io[fd];
 
 	_cmdsCalled["NOTICE"]++;
+	if (!user->GetRegistered())
+		return ;
 	if (input.size() < 3)
 		return ;
-	int	i = checkChan(input[1]);
+	
+	std::vector<std::string>	tmp = Utils::ToList(input[1]);
+	std::vector<std::string>::iterator	it = tmp.begin();
+	
+	int	i = 1; //checkChan(input[1]);
 	switch (i)
 	{
 	case 3:
@@ -409,7 +438,7 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 			std::map<std::string, Channels *>::iterator	Sit = _channel.find(input[1]);
 			if (Sit != _channel.end())
 			{
-				ChanMsg(fd, input[2], Sit->second);
+				ChanMsg(user, input[2], Sit->second);
 				return ;
 			}
 			break ;
@@ -427,7 +456,7 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 				it = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
 				if (it != tmp.end())
 				{
-					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
+					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " NOTICE " << Mit->second->GetNick() << " " << input[2];
 					(*_io[Mit->first]).Send();
 					nUser--;
 				}

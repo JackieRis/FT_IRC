@@ -27,7 +27,7 @@ Config::Config()
 	file.open("Config.ini");
 	if (!file.is_open())
 		throw EMissingConfigFile();
-
+	
 	while (std::getline(file, line))
 	{
 		if (line.empty())
@@ -49,6 +49,9 @@ Config::Config()
 		AddToMap(mapToEdit, line);
 	}
 
+	if (servConfig.count("name") == 0) /* Force a server name if missing in config */
+		servConfig.insert(std::make_pair(std::string("name"), std::string("42ircserv")));
+
 	file.close();
 }
 
@@ -60,9 +63,4 @@ Config::~Config()
 const char *Config::EMissingConfigFile::what() const throw()
 {
 	return ("\"Config.ini\" is missing or cannot be openned, server won't start");
-}
-
-const char *Config::EMissingConfigData::what() const throw()
-{
-	return ("\"Config.ini\" does not contain all the essential informations (name, port, password), server won't start");
 }

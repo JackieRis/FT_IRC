@@ -57,6 +57,9 @@ public:
 	static void E403(NR_ARG, const std::string& chanName);
 	static void E404(NR_ARG, const std::string& chanName);
 
+	static void E411(NR_ARG, const std::string& cmd);
+	static void E412(NR_ARG);
+
 	static void E421(NR_ARG, const std::string& cmd);
 
 	static void E431(NR_ARG);

@@ -6,30 +6,29 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:48:58 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/10 15:34:54 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 12:10:56 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(): _port(8080), _password(""){}
+Server::Server(): _cfg(), _port(8080), _password("") {}
 
-Server::Server(int port, std::string password): _port(port), _password(password){}
+Server::Server(int port, std::string password): _cfg(), _port(port), _password(password) {}
 
-void	Server::ChanMsg(int fd, std::string msg, Channels* chan)
+void	Server::ChanMsg(User *sender, const std::string& msg, Channels* chan)
 {
-	std::set<User *>				tmp = chan->GetUsers();
-	std::set<User *>::iterator		Sit = tmp.begin();
-	std::map<int, User *>::iterator	it;
-
-	it = _user.find(fd);
-	for (; Sit != tmp.end(); ++Sit)
+	const std::set<User *>&				tmp = chan->GetUsers();
+	std::set<User *>::const_iterator	it = tmp.begin();
+	
+	for (; it != tmp.end(); ++it)
 	{
-		if (fd != (*Sit)->GetFd())
-		{
-			(*_io[(*Sit)->GetFd()]) << ":" << it->second->GetNick() << " PRIVMSG " << chan->GetName() <<  " " << msg;
-			(*_io[(*Sit)->GetFd()]).Send();
-		}
+		if (sender == *it)
+			continue ;
+		
+		SocketIo& io = *_userToIoLookup[*it];
+		io << ":" << (*it)->GetNick() << " PRIVMSG " << chan->GetName() <<  " " << msg;
+		io.Send();
 	}
 }
 
@@ -194,7 +193,7 @@ void Server::manageClient(int fd)
 
 int	Server::init()
 {
-	_servName = "42ircserv";
+	_servName = _cfg.servConfig["name"];
 
 	int	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1)
@@ -202,8 +201,6 @@ int	Server::init()
 		std::cerr << "Failed to create socket. Errno: " << strerror(errno) << std::endl;
 		return (-1);
 	}
-
-	std::cout << "Server socket successfully created" << std::endl;
 	
 	sockaddr_in sockaddr;
 	sockaddr.sin_family = AF_INET;
@@ -213,19 +210,17 @@ int	Server::init()
 	if (bind(sockfd, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
 	{
 		std::cerr << "Failed to bind to port " << _port << " Errno: " << strerror(errno) << std::endl;
+		close(sockfd);
 		return (-1);
 	}
-
-	std::cout << "Server socket successfully bound on port " << _port << std::endl;
 	
 	/* start listening. Hold at most 10 connections in the queue */
 	if (listen(sockfd, 10) < 0)
 	{
 		std::cerr << "Failed to listen on socket. Errno: " << strerror(errno) << std::endl;
+		close(sockfd);
 		return (-1);
 	}
-
-	std::cout << "Server socket successfully listening" << std::endl;
 
 	/* Setting unused sockets to -1 */
 	for (int i = 0; i < MAX_CLIENT; i++)
@@ -238,6 +233,8 @@ int	Server::init()
 
 	_startupTimestamp = time(0);
 
+	std::cout << "Server Ready on port " << _port << std::endl;
+
 	return (0);
 }
 
@@ -245,7 +242,7 @@ void Server::run()
 {
 	fd_set	rfds;
 	
-	while (1) // until we implement a way to close our server by listening to descriptor 0
+	while (true) // Server can be stopped with CTRL+D or "EXIT\n"
 	{
 		FD_ZERO(&rfds);
 		for (int i = 0; i < MAX_CLIENT; i++)
@@ -253,6 +250,7 @@ void Server::run()
 			if (_client_fd[i] >= 0)
 				FD_SET(_client_fd[i], &rfds);
 		}
+		FD_SET(0, &rfds);
 
 		/*
 			select() allows us to await socket input without wasting CPU cycles.
@@ -276,11 +274,23 @@ void Server::run()
 
 		if (FD_ISSET(_client_fd[0], &rfds))
 			acceptClient();
+		
+		if (FD_ISSET(0, &rfds))
+		{
+			char buffer[128 + 1];
+			int rd;
+			
+			rd = read(0, buffer, 128);
+			if (rd == 0)
+				break ; /* close server, ignore other input */
+		}
 	}
 }
 
 void Server::shutdown()
 {
+	std::cout << "Shutting down server..." << std::endl;
+
 	removeAllChannels(false);
 
 	for (std::map<int, User *>::iterator it = _user.begin(); it != _user.end(); ++it)

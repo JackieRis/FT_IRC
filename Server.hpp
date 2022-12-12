@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:47:18 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/07 16:34:55 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 11:29:35 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # define MAX_CLIENT 1000
 
 # include <algorithm>
+# include "Config.hpp"
 # include "User.hpp"
 # include "Channels.hpp"
 # include "SocketIo.hpp"
@@ -39,6 +40,7 @@ class Server
 {
 protected:
 
+	Config								_cfg;
 	int									_client_fd[MAX_CLIENT];
 	std::map<int, User *>				_user;
 	std::map<int, SocketIo *>			_io;
@@ -59,7 +61,7 @@ protected:
 	std::map<std::string, int>			_cmdsCalled;
 
 	/** Server.cpp **/
-	void	ChanMsg(int fd, std::string msg, Channels* chan);
+	void	ChanMsg(User *sender, const std::string& msg, Channels* chan);
 	void	acceptClient();
 	void	manageClient(int fd);
 	void	disconnectClient(int fd);
@@ -92,7 +94,6 @@ protected:
 	void	cmdLusers(const std::vector<std::string>& input, int fd);
 
 	// Communication
-	int		checkChan(std::string name); /* ALED PAS ICI */
 	void	cmdJoin(const std::vector<std::string>& input, int fd);
 	void	cmdPrivmsg(const std::vector<std::string>& input, int fd);
 	void	cmdNotice(const std::vector<std::string>& input, int fd);

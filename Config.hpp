@@ -16,18 +16,10 @@ public:
 	Config();
 	~Config();
 
-	//void overrideWithCLIArgs(const std::string& password, int port);
-
 	class EMissingConfigFile : public std::exception
 	{
 		virtual const char *what() const throw();
 	};
-
-	class EMissingConfigData : public std::exception
-	{
-		virtual const char *what() const throw();
-	};
-
 
 };
 

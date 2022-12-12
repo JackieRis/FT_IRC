@@ -175,6 +175,18 @@ void Rep::E404(SocketIo& io, const std::string& cNick, const std::string& chanNa
 	io.Send();
 }
 
+void Rep::E411(SocketIo& io, const std::string& cNick, const std::string& cmd)
+{
+	io << "411 " << cNick << " :No recipient given (" << cmd << ")";
+	io.Send();
+}
+
+void Rep::E412(SocketIo& io, const std::string& cNick)
+{
+	io << "412 " << cNick << " :No text to send";
+	io.Send();
+}
+
 void Rep::E421(SocketIo& io, const std::string& cNick, const std::string& cmd)
 {
 	io << "421 " << cNick << " " << cmd << " :Unknown command";
