@@ -50,6 +50,8 @@ public:
 	static void R353(NR_ARG, const std::string& chanName, const std::string& nick, char chanPrefix, char userPrefix);
 	static void R366(NR_ARG, const std::string& chanName);
 
+	static void R381(NR_ARG);
+
 	static void R391(NR_ARG);
 
 	/* Errors */
