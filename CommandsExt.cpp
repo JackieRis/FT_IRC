@@ -90,10 +90,54 @@ void Server::PartUserFromChannel(User *user, Channels *chan, const std::string& 
 
 void Server::UserMode(const std::vector<std::string>& input, int fd)
 {
-	(void)input; (void)fd;
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+
+	if (input.size() < 3)
+	{
+		std::string modestring = Utils::GenerateModestring(user->GetMode(), true);
+		Rep::R221(NR_IN, modestring);
+		return ;
+	}
+
+	if (!Utils::ValidModeParam(input[2], true))
+	{
+		Rep::E501(NR_IN);
+		return ;
+	}
+
+	UserModeE bit = UM_NONE;
+
+	switch (input[2][1])
+	{
+		case 'i': bit = UM_INVISIBLE; break;
+		case 's': bit = UM_NOTICE; break;
+		case 'w': bit = UM_WALLOPS; break;
+		case 'o': bit = UM_OPER; break;
+	}
+
+	if (bit == UM_OPER && (input[2][0] == '+'))
+		return ; /* Cannot set op yourself through MODE, silently ignore */
+
+	user->SetMode(bit, (input[2][0] == '+'));
+
+	(*io) << ":" << user->GetNick() << " MODE " << user->GetNick() << " :" << input[2];
+	io->Send();
+	/* Only need to send to this user, channel is a different story tho */
 }
 
 void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 {
-	(void)input; (void)fd;
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+	Channels	*chan = _channel[input[1]]; /* Guaranteed by the caller to be valid */
+
+	if (input.size() < 3)
+	{
+		/* MODE channel query */
+		return ; /* DEBUG DON'T REPLY TO THE CLIENT YET AS CHANNEL QUERY ISN'T PROPERLY IMPLEMENTED YET */
+		//Rep::R324(NR_IN, chan->GetModes(), "l", "10");
+		return ;
+	}
+	(void)user; (void)io; (void)chan;
 }

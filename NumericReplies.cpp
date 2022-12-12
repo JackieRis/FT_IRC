@@ -57,7 +57,7 @@ void Rep::R243(SocketIo& io, const std::string& cNick, const std::string& infost
 	io.Send();
 }
 
-void Rep::R221(SocketIo& io, const std::string& cNick, int modes)
+void Rep::R221(SocketIo& io, const std::string& cNick, const std::string& modes)
 {
 	io << "221 " << cNick << " " << modes;
 	io.Send();
@@ -304,6 +304,12 @@ void Rep::E476(SocketIo& io, const std::string& cNick)
 void Rep::E482(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
 	io << "482 " << cNick << " " << chanName << " :You're not channel operator";
+	io.Send();
+}
+
+void Rep::E501(SocketIo& io, const std::string& cNick)
+{
+	io << "501 " << cNick << " :Unknown MODE flag";
 	io.Send();
 }
 

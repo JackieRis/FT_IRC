@@ -29,7 +29,7 @@ public:
 	static void R242(NR_ARG, const std::string& infostr); //RPL_STATSUPTIME
 	static void R243(NR_ARG, const std::string& infostr); //RPL_STATSOLINE
 
-	static void R221(NR_ARG, int modes);
+	static void R221(NR_ARG, const std::string& modes);
 
 	static void R251(NR_ARG, const std::string& infostr);
 	static void R252(NR_ARG, int ops);
@@ -88,6 +88,7 @@ public:
 
 	static void E482(NR_ARG, const std::string& chanName);
 
+	static void E501(NR_ARG);
 	static void E502(NR_ARG);
 };
 

@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 14:06:48 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 15:29:29 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -495,14 +495,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 			Rep::E502(NR_IN);
 			return ;
 		}
-		if (input.size() < 3)
-		{
-			/* MODE user query NEED FIX*/
-			Rep::R221(NR_IN, user->GetMode());
-			return ;
-		}
-		/* MODE user edit */
-
+		UserMode(input, fd);
 		return ;
 	}
 
@@ -512,15 +505,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 		return ;
 	}
 
-	//chan = _channel[input[1]];
-
-	if (input.size() < 3)
-	{
-		/* MODE channel query */
-		return ; /* DEBUG DON'T REPLY TO THE CLIENT YET AS CHANNEL QUERY ISN'T PROPERLY IMPLEMENTED YET */
-		//Rep::R324(NR_IN, chan->GetModes(), "l", "10");
-		return ;
-	}
+	ChannelMode(input, fd);
 }
 
 void Server::cmdTopic(const std::vector<std::string>& input, int fd)

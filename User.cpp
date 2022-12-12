@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:02:44 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/12 12:16:18 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 15:01:16 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 User::User() {}
 
-User::User(in_addr_t ip, int fd) :  _fd(fd), IpAddress(ip) {_Nick = "*";}
+User::User(in_addr_t ip, int fd) : _fd(fd), IpAddress(ip) {_Nick = "*"; _Mode = 0;}
 
 User::~User() {}
 
