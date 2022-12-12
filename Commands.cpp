@@ -373,37 +373,31 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 		I'll come check later for a few edgecases with banned users and things of the likes
 	*/
 	
-	std::vector<std::string>	tmp = Utils::ToList(input[1]);
+	std::vector<std::string>			tmp = Utils::ToList(input[1]);
 	std::vector<std::string>::iterator	it = tmp.begin();
-
-	if (Utils::IsChannel(input[1]) == true)
-	{
-		for (; it != tmp.end(); ++it)
-		{
-			std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
-			if (Sit == _channel.end() || Utils::IsChannel(*it) == false)
-			{
-				Rep::E404(NR_IN, input[1]);
-				return ;
-			}
-			ChanMsg(user, input[2], Sit->second);
-		}
-	}
-
-	size_t								nUser = tmp.size();
 	std::map<int,User *>::iterator		Mit = _user.begin();
-	for (; Mit != _user.end() && nUser != 0; ++Mit)
+
+	for (; it != tmp.end(); ++it)
 	{
-		it = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
-		if (it != tmp.end())
-		{
-			(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
-			(*_io[Mit->first]).Send();
-			nUser--;
-		}
+		std::cout << *it << std::endl;
+		std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
+		if (!(Utils::IsChannel(*it) == false || Sit == _channel.end()))
+			ChanMsg(user, input[2], Sit->second);
 		else
-			return ; //check if this is good, if user not found then the others after the not found will not get the message
+		{
+			std::vector<std::string>::iterator	userIt;
+			for (; Mit != _user.end(); ++Mit)
+			{
+				userIt = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
+				if (userIt != tmp.end())
+				{
+					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
+					(*_io[Mit->first]).Send();
+				}
+			}
+		}
 	}
+
 }
 
 /* Same functionalities than PRIVMSG but server or client can't send auto replies and server can't send errors */
