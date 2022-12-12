@@ -153,9 +153,10 @@ void Rep::R366(SocketIo& io, const std::string& cNick, const std::string& chanNa
 void	Rep::R381(SocketIo& io, const std::string& cNick)
 {
 	io << "381 " << cNick << " " << " :You are now an IRC operator";
+	io.Send();
 }
 
-void Rep::R391(NR_ARG)
+void Rep::R391(SocketIo& io, const std::string& cNick)
 {
 	io << "391 " << cNick << " 42ircserv " << time(0) << " :hello I'm not a date";
 	io.Send();
