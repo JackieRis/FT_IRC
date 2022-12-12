@@ -339,6 +339,6 @@ void Rep::E501(SocketIo& io, const std::string& cNick)
 
 void Rep::E502(SocketIo& io, const std::string& cNick)
 {
-	io << "502 " << cNick << " :Can't change mode for other users";
+	io << "502 " << cNick << " :Can't view or change mode for other users";
 	io.Send();
 }

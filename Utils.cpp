@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:43 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 16:34:30 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:50:09 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ bool	Utils::IsChannel(const std::string& target)
 
 bool Utils::IsValidChannelName(const std::string& target)
 {
-	if (!IsChannel(target))
+	if (!IsChannel(target) || target.size() < 2)
 		return (false);
 	return (target.find(0x07) == std::string::npos); /* Not found, returns true */
 }
@@ -126,6 +126,18 @@ std::string Utils::GenerateModestring(int modes, bool forUser)
 	if (modes & CM_VOICE) str += "v";
 	if (modes & CM_KEY) str += "k";
 	return (str);
+}
+
+std::string Utils::GenerateArgstring(Channels *chan)
+{
+	std::stringstream res;
+	int mode = chan->GetModes();
+
+	if (mode & CM_LIMIT)
+	{
+		res << chan->GetLimit();
+	}
+	return (res.str());
 }
 
 bool Utils::ValidModeParam(const std::string& str, bool forUser)

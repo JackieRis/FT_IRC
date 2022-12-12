@@ -134,9 +134,9 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 
 	if (input.size() < 3)
 	{
-		/* MODE channel query */
-		return ; /* DEBUG DON'T REPLY TO THE CLIENT YET AS CHANNEL QUERY ISN'T PROPERLY IMPLEMENTED YET */
-		//Rep::R324(NR_IN, chan->GetModes(), "l", "10");
+		std::string modestring = Utils::GenerateModestring(chan->GetModes(), false);
+		std::string argstring = Utils::GenerateArgstring(chan);
+		Rep::R324(NR_IN, chan->GetName(), modestring, argstring);
 		return ;
 	}
 	(void)user; (void)io; (void)chan;

@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:13 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 16:16:17 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:20:19 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,11 @@ public:
 		Generate a mode string for querying, can provide both for user or for channel modes
 	*/
 	static std::string GenerateModestring(int modes, bool forUser);
+
+	/*
+		Generate an argument string for channel MODE query for R324
+	*/
+	static std::string GenerateArgstring(Channels *chan);
 
 	/*
 		Checks if the supplied mode parameter is not ill formed
