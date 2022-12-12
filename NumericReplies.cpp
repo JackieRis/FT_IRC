@@ -174,7 +174,7 @@ void	Rep::R381(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
-void Rep::R391(NR_ARG)
+void Rep::R391(SocketIo& io, const std::string& cNick)
 {
 	io << "391 " << cNick << " 42ircserv " << time(0) << " :hello I'm not a date";
 	io.Send();
