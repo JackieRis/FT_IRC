@@ -87,3 +87,13 @@ void Server::PartUserFromChannel(User *user, Channels *chan, const std::string& 
 
 	chan->RemoveUser(user);
 }
+
+void Server::UserMode(const std::vector<std::string>& input, int fd)
+{
+	(void)input; (void)fd;
+}
+
+void Server::ChannelMode(const std::vector<std::string>& input, int fd)
+{
+	(void)input; (void)fd;
+}

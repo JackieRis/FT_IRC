@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 13:26:24 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 14:06:48 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,15 +253,21 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 
 		if (!creator)
 		{
-			if (flags & CM_BAN && chan->IsBanned(user)) /* Banned, don't accept */
+			if (flags & CM_LIMIT && chan->GetSize() >= chan->GetLimit()) /* Channel is limited and full */
 			{
-				Rep::E474(NR_IN, chan->GetName());
+				Rep::E471(NR_IN, chan->GetName());
 				continue ;
 			}
-			
+
 			if (flags & CM_INVITEONLY) /* Invite only, don't accept */
 			{
 				Rep::E473(NR_IN, chan->GetName());
+				continue ;
+			}
+			
+			if (flags & CM_BAN && chan->IsBanned(user)) /* Banned, don't accept */
+			{
+				Rep::E474(NR_IN, chan->GetName());
 				continue ;
 			}
 
@@ -276,12 +282,6 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 					Rep::E475(NR_IN, chan->GetName());
 					continue ;
 				}
-			}
-
-			if (flags & CM_LIMIT && chan->GetSize() >= chan->GetLimit()) /* Channel is limited and full */
-			{
-				Rep::E471(NR_IN, chan->GetName());
-				continue ;
 			}
 
 			chan->AddUser(user);
@@ -705,7 +705,7 @@ void Server::cmdNames(const std::vector<std::string>& input, int fd)
 		chan = _channel[*it];
 		bool isOnChannel = chan->HasUser(user);
 
-		if (chan->GetModes() & CM_SECRET || chan->GetModes() & CM_PRIVATE && !isOnChannel) /* Channel is secret and user isn't part of it */
+		if ((chan->GetModes() & CM_SECRET || chan->GetModes() & CM_PRIVATE) && !isOnChannel) /* Channel is secret and user isn't part of it */
 		{
 			Rep::R366(NR_IN, chan->GetName());
 			continue ;

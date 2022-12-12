@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:47:18 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/12 11:29:35 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 14:18:48 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,12 @@ protected:
 
 	/** CommandsExt.cpp **/
 	void	SendToAllInChannel(Channels *chan, const std::string& msg);
-	void 	SendToAllJoinedChannel(User *user, const std::string& msg);
+	void	SendToAllJoinedChannel(User *user, const std::string& msg);
 	void	QuitUserFromServer(User *user, const std::string& reason);
 	void	PartUserFromAllChannel(User *user, const std::string& msg);
 	void	PartUserFromChannel(User *user, Channels *chan, const std::string& msg);
+	void	UserMode(const std::vector<std::string>& input, int fd);
+	void	ChannelMode(const std::vector<std::string>& input, int fd);
 	
 
 public:

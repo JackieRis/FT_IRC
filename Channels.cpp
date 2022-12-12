@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 14:01:27 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 14:03:23 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,10 @@ Channels::~Channels()
 	std::cerr << "Channel " << channelName << " destroyed" << std::endl;
 }
 
-// Removes the user from the channel
-// If the channel becomes empty, it has to be deleted externally
+/*
+	Setters
+*/
+
 void	Channels::RemoveUser(User *user)
 {
 	if (users.find(user) == users.end())
@@ -71,8 +73,12 @@ void	Channels::Unban(const std::string& banName) {banned.erase(banName);}
 void	Channels::ChangeUserOp(User *user, bool state) {userflags[user].op = state;}
 void	Channels::ChangeUserVoice(User *user, bool state) {userflags[user].voice = state;}
 
-const std::set<User *>	&Channels::GetUsers() const {return(users);}
-const std::string&	Channels::GetName() const {return (channelName);}
+/*
+	Getters
+*/
+
+const std::set<User *>&		Channels::GetUsers() const {return(users);}
+const std::string&			Channels::GetName() const {return (channelName);}
 
 const std::vector<std::string> Channels::GetUserNickList() const
 {
