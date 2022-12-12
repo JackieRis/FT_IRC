@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 13:55:00 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 14:01:52 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ class Channels
 	void	SetLimit(int userLimit);
 	void	Ban(const std::string& banName);
 	void	Unban(const std::string& banName);
+	void	ChangeUserOp(User *user, bool state);
+	void	ChangeUserVoice(User *user, bool state);
 
 	// Getters
 	const std::set<User *>			&GetUsers() const;

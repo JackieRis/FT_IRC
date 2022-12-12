@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 13:55:19 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 14:01:27 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ void	Channels::SetMode(ChannelModeE mode, int state)
 void	Channels::SetLimit(int userLimit) {limit = userLimit;}
 void	Channels::Ban(const std::string& banName) {banned.insert(banName);}
 void	Channels::Unban(const std::string& banName) {banned.erase(banName);}
+void	Channels::ChangeUserOp(User *user, bool state) {userflags[user].op = state;}
+void	Channels::ChangeUserVoice(User *user, bool state) {userflags[user].voice = state;}
 
 const std::set<User *>	&Channels::GetUsers() const {return(users);}
 const std::string&	Channels::GetName() const {return (channelName);}
