@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 11:46:58 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 13:22:23 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,7 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		if (!Utils::IsValidChannelName(*it))
 		{
 			Rep::E476(*io, *it); /* Don't use NR_IN here ! */
-			return ;
+			continue ;
 		}
 		// check if channel exist or can be created, validate channel name
 		if (_channel.find(*it) == _channel.end())
@@ -253,29 +253,35 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 
 		if (!creator)
 		{
-			if (flags & CM_BAN && chan->IsBanned(user))
+			if (flags & CM_BAN && chan->IsBanned(user)) /* Banned, don't accept */
 			{
 				Rep::E474(NR_IN, chan->GetName());
-				return ;
+				continue ;
 			}
 			
-			if (flags & CM_INVITEONLY)
+			if (flags & CM_INVITEONLY) /* Invite only, don't accept */
 			{
 				Rep::E473(NR_IN, chan->GetName());
-				return ;
+				continue ;
 			}
 
-			if (flags & CM_KEY)
+			if (flags & CM_KEY) 
 			{
 				std::string inputKey = std::string("");
 
 				if (n < keyLst.size())
 					inputKey = keyLst[n];
-				if (!chan->ValidateKey(inputKey))
+				if (!chan->ValidateKey(inputKey)) /* invalid key, don't accept */
 				{
 					Rep::E475(NR_IN, chan->GetName());
-					return ;
+					continue ;
 				}
+			}
+
+			if (flags & CM_LIMIT && chan->GetSize() >= chan->GetLimit()) /* Channel is limited and full */
+			{
+				Rep::E471(NR_IN, chan->GetName());
+				continue ;
 			}
 
 			chan->AddUser(user);
@@ -739,7 +745,7 @@ void Server::cmdLusers(const std::vector<std::string>& input, int fd)
 	for (; it != _user.end(); ++it)
 	{
 		invisibleNb += (it->second->GetMode() & UM_INVISIBLE);
-		opped += ((it->second->GetMode() & UM_OPER) || (it->second->GetMode() & UM_LOPER));
+		opped += (it->second->GetMode() & UM_OPER);
 	}
 
 	std::stringstream ss;

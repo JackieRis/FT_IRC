@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/10 15:20:38 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 12:37:33 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Channels
 	std::map<User *, char> prefix;
 
 	int					modes;
+	int					limit;
 	std::string			key;
 
 	public:
@@ -53,6 +54,7 @@ class Channels
 	void	SetTopic(const std::string& t, const std::string& author);
 	void	SetMode(ChannelModeE mode, int state);
 	void	SetKey(const std::string newKey);
+	void	SetLimit(int userLimit);
 
 	// Getters
 	const std::set<User *>			&GetUsers() const;
@@ -70,7 +72,8 @@ class Channels
 	time_t							GetLastTopicChangeDate() const;
 	char							GetChanPrefix() const;
 	char							GetUserPrefix(User *user) const;
-	int GetSize() const;
+	int								GetLimit() const;
+	int								GetSize() const;
 	// GetUserList() ?
 };
 

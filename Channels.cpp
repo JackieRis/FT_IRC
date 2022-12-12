@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/10 15:20:53 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 12:38:21 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ void	Channels::SetMode(ChannelModeE mode, int state)
 	else 
 		modes |= mode;
 }
+
+void	Channels::SetLimit(int userLimit) {limit = userLimit;}
 
 const std::set<User *>	&Channels::GetUsers() const {return(users);}
 const std::string&	Channels::GetName() const {return (channelName);}
@@ -158,6 +160,11 @@ char	Channels::GetChanPrefix() const
 char	Channels::GetUserPrefix(User *user) const
 {
 	return (prefix.find(user)->second);
+}
+
+int Channels::GetLimit() const
+{
+	return (limit);
 }
 
 int Channels::GetSize() const
