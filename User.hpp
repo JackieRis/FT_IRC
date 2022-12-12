@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 22:59:27 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/07 13:46:13 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 12:15:54 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ protected:
 	bool		_DidUser;
 	bool		_DidNick;
 	bool		_HasDisconnected;
+	bool		_ServerOpper;
 	
 	// to be moved in a map<> insde Server
 	in_addr_t	IpAddress;
@@ -52,6 +53,7 @@ public:
 	bool	GetDidUser() const;
 	bool	GetDidNick() const;
 	bool	HasDisconnected() const;
+	bool	IsServerOpper() const;
 
 	void	SetNick(const std::string &Nick);
 	void	SetName(const std::string &Name);
@@ -62,6 +64,7 @@ public:
 	void	SetDidUser(bool b);
 	void	SetDidNick(bool b);
 	void	SetHasDisconnected();
+	void	BecomeServerOper();
 };
 
 #endif

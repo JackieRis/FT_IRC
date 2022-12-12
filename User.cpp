@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:02:44 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/07 14:25:47 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 12:16:18 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	User::SetMode(UserModeE mode, int state)
 void	User::SetDidUser(bool b) {_DidUser = b;}
 void	User::SetDidNick(bool b) {_DidNick = b;}
 void	User::SetHasDisconnected() {_HasDisconnected = true;}
+void	User::BecomeServerOper() {_ServerOpper = true;}
 
 int		User::GetFd() const {return (_fd);}
 
@@ -75,4 +76,9 @@ bool User::GetDidNick() const
 bool	User::HasDisconnected() const
 {
 	return (_HasDisconnected);
+}
+
+bool	User::IsServerOpper() const
+{
+	return (_ServerOpper);
 }
