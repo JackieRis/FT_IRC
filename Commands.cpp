@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 14:06:48 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:44:05 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,10 +249,10 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 			addChannel(*it, user);
 		}
 		chan = _channel[*it];
-		int flags = chan->GetModes();
 
 		if (!creator)
 		{
+			int flags = chan->GetModes();
 			if (flags & CM_LIMIT && chan->GetSize() >= chan->GetLimit()) /* Channel is limited and full */
 			{
 				Rep::E471(NR_IN, chan->GetName());
@@ -288,15 +288,18 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		}
 
 		const std::set<User *>& usrList = chan->GetUsers();
+		std::stringstream msg;
+		msg << ":" << user->GetNick() << " JOIN " << chan->GetName();
 
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
 		{
 			SocketIo	*chanUserIo = _userToIoLookup[*uit];
 			
-			if (!chanUserIo)
-				continue ;
+			//if (!chanUserIo)
+			//	continue ;
+			/* If we ever crash put this back in or use actual map usage protection */
 
-			(*chanUserIo) << ":" << user->GetNick() << " JOIN " << chan->GetName();
+			(*chanUserIo) << msg.str();
 			chanUserIo->Send();
 		}
 
@@ -489,14 +492,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 			Rep::E502(NR_IN);
 			return ;
 		}
-		if (input.size() < 3)
-		{
-			/* MODE user query NEED FIX*/
-			Rep::R221(NR_IN, user->GetMode());
-			return ;
-		}
-		/* MODE user edit */
-
+		UserMode(input, fd);
 		return ;
 	}
 
@@ -505,16 +501,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 		Rep::E403(NR_IN, input[1]);
 		return ;
 	}
-
-	//chan = _channel[input[1]];
-
-	if (input.size() < 3)
-	{
-		/* MODE channel query */
-		return ; /* DEBUG DON'T REPLY TO THE CLIENT YET AS CHANNEL QUERY ISN'T PROPERLY IMPLEMENTED YET */
-		//Rep::R324(NR_IN, chan->GetModes(), "l", "10");
-		return ;
-	}
+	ChannelMode(input, fd);
 }
 
 void Server::cmdTopic(const std::vector<std::string>& input, int fd)
@@ -600,7 +587,6 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 	SocketIo	*io = _io[fd];
 
 	_cmdsCalled["STATS"]++;
-
 	if (input.size() < 2)
 	{
 		Rep::R219(NR_IN, "");
@@ -613,8 +599,8 @@ void Server::cmdStats(const std::vector<std::string>& input, int fd)
 		std::stringstream ss;
 
 		ss << _servName << " 0 ";
-		ss << SocketIo::sentMsg << " " << (SocketIo::sentkb / 1024) << " ";
-		ss << SocketIo::recvMsg << " " << (SocketIo::recvkb / 1024) << " ";
+		ss << SocketIo::sentMsg << " " << (SocketIo::sentkb / 1024.0f) << " ";
+		ss << SocketIo::recvMsg << " " << (SocketIo::recvkb / 1024.0f) << " ";
 		ss << (time(0) - _startupTimestamp);
 		
 		Rep::R211(NR_IN, ss.str());

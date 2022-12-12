@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 22:59:27 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/12 12:15:54 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 16:51:07 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ protected:
 	bool		_DidUser;
 	bool		_DidNick;
 	bool		_HasDisconnected;
-	bool		_ServerOpper;
 	
 	// to be moved in a map<> insde Server
 	in_addr_t	IpAddress;

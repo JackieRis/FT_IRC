@@ -57,7 +57,7 @@ void Rep::R243(SocketIo& io, const std::string& cNick, const std::string& infost
 	io.Send();
 }
 
-void Rep::R221(SocketIo& io, const std::string& cNick, int modes)
+void Rep::R221(SocketIo& io, const std::string& cNick, const std::string& modes)
 {
 	io << "221 " << cNick << " " << modes;
 	io.Send();
@@ -331,8 +331,14 @@ void Rep::E482(SocketIo& io, const std::string& cNick, const std::string& chanNa
 	io.Send();
 }
 
+void Rep::E501(SocketIo& io, const std::string& cNick)
+{
+	io << "501 " << cNick << " :Unknown MODE flag";
+	io.Send();
+}
+
 void Rep::E502(SocketIo& io, const std::string& cNick)
 {
-	io << "502 " << cNick << " :Can't change mode for other users";
+	io << "502 " << cNick << " :Can't view or change mode for other users";
 	io.Send();
 }

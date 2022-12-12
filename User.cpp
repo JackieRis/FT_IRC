@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:02:44 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/12 12:16:18 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 16:51:17 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 User::User() {}
 
-User::User(in_addr_t ip, int fd) :  _fd(fd), IpAddress(ip) {_Nick = "*";}
+User::User(in_addr_t ip, int fd) : _fd(fd), IpAddress(ip) {_Nick = "*"; _Mode = 0;}
 
 User::~User() {}
 
@@ -34,7 +34,7 @@ void	User::SetMode(UserModeE mode, int state)
 void	User::SetDidUser(bool b) {_DidUser = b;}
 void	User::SetDidNick(bool b) {_DidNick = b;}
 void	User::SetHasDisconnected() {_HasDisconnected = true;}
-void	User::BecomeServerOper() {_ServerOpper = true;}
+void	User::BecomeServerOper() {SetMode(UM_OPER, true);}
 
 int		User::GetFd() const {return (_fd);}
 
@@ -80,5 +80,5 @@ bool	User::HasDisconnected() const
 
 bool	User::IsServerOpper() const
 {
-	return (_ServerOpper);
+	return (_Mode & UM_OPER);
 }

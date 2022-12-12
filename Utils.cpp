@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:43 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/10 15:15:47 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:50:09 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,55 @@ bool	Utils::IsChannel(const std::string& target)
 
 bool Utils::IsValidChannelName(const std::string& target)
 {
-	if (!IsChannel(target))
+	if (!IsChannel(target) || target.size() < 2)
 		return (false);
 	return (target.find(0x07) == std::string::npos); /* Not found, returns true */
+}
+
+std::string Utils::GenerateModestring(int modes, bool forUser)
+{
+	std::string str = "+";
+
+	if (forUser)
+	{
+		if (modes & UM_INVISIBLE) str += "i";
+		if (modes & UM_NOTICE) str += "s";
+		if (modes & UM_WALLOPS) str += "w";
+		if (modes & UM_OPER) str += "o";
+		return (str);
+	}
+	if (modes & CM_PRIVATE) str += "p";
+	if (modes & CM_SECRET) str += "s";
+	if (modes & CM_INVITEONLY) str += "i";
+	if (modes & CM_PROTECTEDTOPIC) str += "t";
+	if (modes & CM_NOEXTERNAL) str += "n";
+	if (modes & CM_MODERATED) str += "m";
+	if (modes & CM_LIMIT) str += "l";
+	if (modes & CM_BAN) str += "b";
+	if (modes & CM_VOICE) str += "v";
+	if (modes & CM_KEY) str += "k";
+	return (str);
+}
+
+std::string Utils::GenerateArgstring(Channels *chan)
+{
+	std::stringstream res;
+	int mode = chan->GetModes();
+
+	if (mode & CM_LIMIT)
+	{
+		res << chan->GetLimit();
+	}
+	return (res.str());
+}
+
+bool Utils::ValidModeParam(const std::string& str, bool forUser)
+{
+	if (str.size() != 2)
+		return (false);
+	if (str[0] != '+' && str[0] != '-')
+		return (false);
+	if (forUser)
+		return (str.find_first_of(USERMODE_CHARLIST, 0) != std::string::npos);
+	return (str.find_first_of(CHANNELMODE_CHARLIST, 0) != std::string::npos);
 }

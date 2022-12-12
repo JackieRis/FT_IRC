@@ -6,6 +6,7 @@
 
 enum UserModeE
 {
+	UM_NONE = 0x00,
 	UM_INVISIBLE = 0x01,
 	UM_NOTICE = 0x02,
 	UM_WALLOPS = 0x04,
@@ -14,6 +15,7 @@ enum UserModeE
 
 enum ChannelModeE
 {
+	CM_NONE = 0x0000,
 	CM_CHANGEOPPER = 0x0001,
 	CM_PRIVATE = 0x0002,
 	CM_SECRET = 0x0004,
