@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 12:37:33 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 13:55:00 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@
 
 # include "Modes.hpp"
 
+struct ChanUserFlags
+{
+	bool	op;
+	bool	voice;
+};
+
 class Channels
 {
 	protected:
@@ -34,9 +40,8 @@ class Channels
 	time_t		channelCreationDate;
 
 	std::set<User *> users;
-	std::set<User *> opped;
-	std::set<User *> banned;
-	std::map<User *, char> prefix;
+	std::set<std::string> banned;
+	std::map<User *, ChanUserFlags> userflags;
 
 	int					modes;
 	int					limit;
@@ -55,6 +60,8 @@ class Channels
 	void	SetMode(ChannelModeE mode, int state);
 	void	SetKey(const std::string newKey);
 	void	SetLimit(int userLimit);
+	void	Ban(const std::string& banName);
+	void	Unban(const std::string& banName);
 
 	// Getters
 	const std::set<User *>			&GetUsers() const;
@@ -65,8 +72,8 @@ class Channels
 	bool							HasUser(User *user) const;
 	bool							IsBanned(User *user) const;
 	bool							IsOpped(User *user) const;
+	bool							IsVoice(User *user) const;
 	bool							ValidateKey(const std::string& userKey) const;
-	//const std::vector<int>			GetUserFd() const;
 	const std::string&				GetTopic() const;
 	const std::string&				GetLastTopicEditor() const;
 	time_t							GetLastTopicChangeDate() const;
@@ -74,7 +81,6 @@ class Channels
 	char							GetUserPrefix(User *user) const;
 	int								GetLimit() const;
 	int								GetSize() const;
-	// GetUserList() ?
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 12:38:21 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 13:55:19 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@ Channels::Channels()
 Channels::Channels(const std::string& chanName, User *firstUser) : channelName(chanName)
 {
 	users.insert(firstUser);
-	opped.insert(firstUser);
-	prefix.insert(std::make_pair(firstUser, '@'));
+	userflags.insert(std::make_pair(firstUser, (ChanUserFlags){true, false}));
 
 	channelCreationDate = time(0);
 
@@ -45,18 +44,14 @@ void	Channels::RemoveUser(User *user)
 	if (users.find(user) == users.end())
 		return ;
 	
-	// remove the user from opped list if present
-	if (opped.count(user))
-		opped.erase(user);
-	
-	prefix.erase(user);
+	userflags.erase(user);
 	users.erase(user);
 }
 
 void	Channels::AddUser(User *user)
 {
 	users.insert(user);
-	prefix.insert(std::make_pair(user, 'u'));
+	userflags.insert(std::make_pair(user, (ChanUserFlags){false, false}));
 }
 
 void	Channels::SetTopic(const std::string& t, const std::string& author) {topic = t; lastTopicEditor = author; lastTopicChangeDate = time(0);}
@@ -71,6 +66,8 @@ void	Channels::SetMode(ChannelModeE mode, int state)
 }
 
 void	Channels::SetLimit(int userLimit) {limit = userLimit;}
+void	Channels::Ban(const std::string& banName) {banned.insert(banName);}
+void	Channels::Unban(const std::string& banName) {banned.erase(banName);}
 
 const std::set<User *>	&Channels::GetUsers() const {return(users);}
 const std::string&	Channels::GetName() const {return (channelName);}
@@ -111,29 +108,25 @@ bool	Channels::HasUser(User *user) const
 
 bool	Channels::IsBanned(User *user) const
 {
-	return (banned.count(user));
+	return (banned.count(user->GetNick()) || banned.count(user->GetName()));
 }
 
 bool	Channels::IsOpped(User *user) const
 {
-	return (opped.count(user));
+	std::map<User *, ChanUserFlags>::const_iterator it = userflags.find(user);
+	return (it->second.op);
+}
+
+bool	Channels::IsVoice(User *user) const
+{
+	std::map<User *, ChanUserFlags>::const_iterator it = userflags.find(user);
+	return (it->second.voice);
 }
 
 bool	Channels::ValidateKey(const std::string& userKey) const
 {
 	return (userKey == key);
 }
-
-// const std::vector<int>	Channels::GetUserFd() const
-// {
-// 	std::vector<int>			ret;
-// 	std::set<User *>::iterator	Sit = users.begin();
-// 	for (; Sit != users.end(); ++Sit)
-// 	{
-// 		ret.push_back()
-// 	}
-	
-// }
 
 const std::string&	Channels::GetTopic() const
 {
@@ -154,12 +147,20 @@ char	Channels::GetChanPrefix() const
 {
 	if (modes & CM_SECRET)
 		return ('@');
+	if (modes & CM_PRIVATE)
+		return ('*');
 	return ('=');
 }
 
 char	Channels::GetUserPrefix(User *user) const
 {
-	return (prefix.find(user)->second);
+	std::map<User *, ChanUserFlags>::const_iterator it = userflags.find(user);
+	
+	if (it->second.op)
+		return ('@');
+	if (it->second.voice)
+		return ('+');
+	return ('u');
 }
 
 int Channels::GetLimit() const
