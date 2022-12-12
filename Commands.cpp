@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 13:22:23 by aberneli         ###   ########.fr       */
+/*   Updated: 2022/12/12 13:26:24 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -705,7 +705,7 @@ void Server::cmdNames(const std::vector<std::string>& input, int fd)
 		chan = _channel[*it];
 		bool isOnChannel = chan->HasUser(user);
 
-		if (chan->GetModes() & CM_SECRET && !isOnChannel) /* Channel is secret and user isn't part of it */
+		if (chan->GetModes() & CM_SECRET || chan->GetModes() & CM_PRIVATE && !isOnChannel) /* Channel is secret and user isn't part of it */
 		{
 			Rep::R366(NR_IN, chan->GetName());
 			continue ;
