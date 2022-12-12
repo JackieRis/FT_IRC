@@ -367,45 +367,36 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 		I'll come check later for a few edgecases with banned users and things of the likes
 	*/
 	
-	int	i = 1; //checkChan(input[1]);
-	switch (i)
+	std::vector<std::string>	tmp = Utils::ToList(input[1]);
+	std::vector<std::string>::iterator	it = tmp.begin();
+
+	if (Utils::IsChannel(input[1]) == true)
 	{
-	case 3:
-		;//send to admin ? wtf i don't understand cause my english is very bad
-	case 2:
-		;//send to admin
-	case 1:
+		for (; it != tmp.end(); ++it)
 		{
-			std::map<std::string, Channels *>::iterator	Sit = _channel.find(input[1]);
-			if (Sit != _channel.end())
+			std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
+			if (Sit == _channel.end() || Utils::IsChannel(*it) == false)
 			{
-				ChanMsg(user, input[2], Sit->second);
+				Rep::E404(NR_IN, input[1]);
 				return ;
 			}
-			break ;
+			ChanMsg(user, input[2], Sit->second);
 		}
-	case -1:
-		Rep::E404(NR_IN, input[1]);
-		return ;
-		break ;
-	default:
-		{	
-			std::vector<std::string>			tmp = Utils::ToList(input[1]);
-			size_t								nUser = tmp.size();
-			std::vector<std::string>::iterator	it = tmp.begin();
-			std::map<int,User *>::iterator		Mit = _user.begin();
-			for (; Mit != _user.end() && nUser != 0; ++Mit)
-			{
-				it = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
-				if (it != tmp.end())
-				{
-					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
-					(*_io[Mit->first]).Send();
-					nUser--;
-				}
-			}
-			break;
+	}
+
+	size_t								nUser = tmp.size();
+	std::map<int,User *>::iterator		Mit = _user.begin();
+	for (; Mit != _user.end() && nUser != 0; ++Mit)
+	{
+		it = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
+		if (it != tmp.end())
+		{
+			(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
+			(*_io[Mit->first]).Send();
+			nUser--;
 		}
+		else
+			return ; //check if this is good, if user not found then the others after the not found will not get the message
 	}
 }
 
@@ -877,12 +868,24 @@ void	Server::cmdOper(const std::vector<std::string>& input, int fd)
 {
 	SocketIo*	io = _io[fd];
 	User		*user = _user[fd];
+	std::map<std::string, std::string>::iterator Mit =  _cfg.opperAccounts.begin();
 
 	_cmdsCalled["OPER"]++;
 	if (input.size() != 3)
 	{
 		Rep::E461(*io, user->GetNick(), "OPER");
 		return ;
+	}
+	Mit = _cfg.opperAccounts.find(input[1]);
+	if (Mit != _cfg.opperAccounts.end())
+	{
+		if (Mit->second == input[2])
+		{
+			user->BecomeServerOper();
+			Rep::R381(NR_IN);
+			return ;
+		}
+		Rep::E464(NR_IN);
 	}
 }
 
