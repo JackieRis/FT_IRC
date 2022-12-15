@@ -464,7 +464,6 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
-	//Channels	*chan; /* Get the pointer later */
 
 	_cmdsCalled["MODE"]++;
 	if (!user->GetRegistered())

@@ -139,5 +139,9 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 		Rep::R324(NR_IN, chan->GetName(), modestring, argstring);
 		return ;
 	}
+
+	// if (not on channel, don't)
+	// if (not channel op, don't)
+
 	(void)user; (void)io; (void)chan;
 }
