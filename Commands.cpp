@@ -357,24 +357,6 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 		Rep::E412(NR_IN); /* ERR_NOTEXTTOSEND */
 		return ;
 	}
-
-	/* 
-		What to fix:
-		Currently, you check if the first argument is a channel, and then work on sending the message
-		if the first target is a user, you send the message to everyone in the list
-		It's kind of a mess tho
-
-		The issue: this could be the target list: "#chien,aberneli,#fromage,#limace,corobizar"
-		in this case, you will only send the message to #chien and nowhere else
-
-		remove the switch, don't bother with checkChan, just use Utils::IsChan() instead
-		for each target (splitted with Utils::ToList(input[1]) ) , check if chan, and send input[2] (the message) accordingly
-
-		I also changed ChanMsg to make it cleaner, usage should be even easier now
-
-		when this is done, copy this over to NOTICE and remove the error replies
-		I'll come check later for a few edgecases with banned users and things of the likes
-	*/
 	
 	std::vector<std::string>			tmp = Utils::ToList(input[1]);
 	std::vector<std::string>::iterator	it = tmp.begin();
@@ -417,45 +399,28 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 	if (input.size() < 3)
 		return ;
 	
-	std::vector<std::string>	tmp = Utils::ToList(input[1]);
+	std::vector<std::string>			tmp = Utils::ToList(input[1]);
 	std::vector<std::string>::iterator	it = tmp.begin();
-	
-	int	i = 1; //checkChan(input[1]);
-	switch (i)
+	std::map<int,User *>::iterator		Mit = _user.begin();
+
+	for (; it != tmp.end(); ++it)
 	{
-	case 3:
-		;//idk
-	case 2:
-		;//ops
-	case 1:
+		std::cout << *it << std::endl;
+		std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
+		if (!(Utils::IsChannel(*it) == false || Sit == _channel.end()))
+			ChanMsg(user, input[2], Sit->second);
+		else
 		{
-			std::map<std::string, Channels *>::iterator	Sit = _channel.find(input[1]);
-			if (Sit != _channel.end())
+			std::vector<std::string>::iterator	userIt;
+			for (; Mit != _user.end(); ++Mit)
 			{
-				ChanMsg(user, input[2], Sit->second);
-				return ;
-			}
-			break ;
-		}
-	case -1:
-		return ;
-
-	default:
-		{
-			size_t								nUser = tmp.size();
-			std::map<int,User *>::iterator		Mit = _user.begin();
-
-			for (; Mit != _user.end() && nUser != 0; ++Mit)
-			{
-				it = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
-				if (it != tmp.end())
+				userIt = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
+				if (userIt != tmp.end())
 				{
-					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " NOTICE " << Mit->second->GetNick() << " " << input[2];
+					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
 					(*_io[Mit->first]).Send();
-					nUser--;
 				}
 			}
-			break;
 		}
 	}
 }
