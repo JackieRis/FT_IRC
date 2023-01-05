@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:43 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 17:50:09 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 00:15:43 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,18 @@ bool Utils::IsValidChannelName(const std::string& target)
 	return (target.find(0x07) == std::string::npos); /* Not found, returns true */
 }
 
+bool Utils::IsValidNumber(const std::string& target)
+{
+	if (target.length() >= 9) /* Let's not bother with numbers too big */
+		return (false);
+	for (std::string::const_iterator it = target.begin(); it != target.end(); ++it)
+	{
+		if (!(*it >= '0' && *it <= '9'))
+			return (false);
+	}
+	return (true);
+}
+
 std::string Utils::GenerateModestring(int modes, bool forUser)
 {
 	std::string str = "+";
@@ -149,4 +161,23 @@ bool Utils::ValidModeParam(const std::string& str, bool forUser)
 	if (forUser)
 		return (str.find_first_of(USERMODE_CHARLIST, 0) != std::string::npos);
 	return (str.find_first_of(CHANNELMODE_CHARLIST, 0) != std::string::npos);
+}
+
+ChannelModeE Utils::ChanModeParamToFlag(char c)
+{
+	switch (c)
+	{
+		case 'o': return (CM_CHANGEOPPER); break;
+		case 'p': return (CM_PRIVATE); break;
+		case 's': return (CM_SECRET); break;
+		case 'i': return (CM_INVITEONLY); break;
+		case 't': return (CM_PROTECTEDTOPIC); break;
+		case 'n': return (CM_NOEXTERNAL); break;
+		case 'm': return (CM_MODERATED); break;
+		case 'v': return (CM_VOICE); break;
+		case 'l': return (CM_LIMIT); break;
+		case 'b': return (CM_BAN); break;
+		case 'k': return (CM_KEY); break;
+	}
+	return (CM_NONE);
 }

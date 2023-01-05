@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 17:44:05 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/05 22:31:28 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -444,6 +444,7 @@ void Server::cmdMode(const std::vector<std::string>& input, int fd)
 		Rep::E403(NR_IN, input[1]);
 		return ;
 	}
+	/* target == channel */
 	ChannelMode(input, fd);
 }
 
@@ -823,16 +824,30 @@ void	Server::cmdOper(const std::vector<std::string>& input, int fd)
 		Rep::E461(*io, user->GetNick(), "OPER");
 		return ;
 	}
+	
 	Mit = _cfg.opperAccounts.find(input[1]);
-	if (Mit != _cfg.opperAccounts.end())
+	if (Mit == _cfg.opperAccounts.end()) /* no OP username matching */
 	{
-		if (Mit->second == input[2])
-		{
-			user->BecomeServerOper();
-			Rep::R381(NR_IN);
-			return ;
-		}
 		Rep::E464(NR_IN);
+		return ;
+	}
+	if (Mit->second != input[2]) /* Provided password doesn't match the OP username */
+	{
+		Rep::E464(NR_IN);
+		return ;
+	}
+	
+	user->BecomeServerOper();
+	Rep::R381(NR_IN);
+
+	/* Notify everyone of the new OP user */
+	std::map<int, SocketIo *>::iterator sit = this->_io.begin();
+	std::stringstream ss;
+	ss << "MODE +o " << user->GetNick();
+	for (; sit != _io.end(); ++sit)
+	{
+		(*sit->second) << ss.str();
+		(*sit->second).Send();
 	}
 }
 

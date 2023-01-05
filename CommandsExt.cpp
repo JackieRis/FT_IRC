@@ -132,16 +132,95 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 	SocketIo	*io = _io[fd];
 	Channels	*chan = _channel[input[1]]; /* Guaranteed by the caller to be valid */
 
-	if (input.size() < 3)
+	if (input.size() < 3) /* MODE channel query */
 	{
 		std::string modestring = Utils::GenerateModestring(chan->GetModes(), false);
 		std::string argstring = Utils::GenerateArgstring(chan);
+		// banlist
+		// banlist end
 		Rep::R324(NR_IN, chan->GetName(), modestring, argstring);
 		return ;
 	}
 
-	// if (not on channel, don't)
-	// if (not channel op, don't)
+	/* user is not on channel or isn't a channel op */
+	if (!chan->HasUser(user))
+	{
+		Rep::E442(NR_IN, chan->GetName());
+		return ;
+	}
+	if (!chan->IsOpped(user))
+	{
+		Rep::E442(NR_IN, chan->GetName());
+		return ;
+	}
 
-	(void)user; (void)io; (void)chan;
+	/* invalid input */
+	if (!Utils::ValidModeParam(input[2], false))
+	{
+		Rep::E472(NR_IN, input[2]);
+		return ;
+	}
+
+	std::string msg;
+	msg += ":" + user->GetNick() + " MODE " + input[2] + " " + input[3];
+
+	switch (input[2][1])
+	{
+		/* switch statement magic, all of these only flip a flag, so we just fall through any */
+		case 'p':
+		case 's':
+		case 'i':
+		case 't':
+		case 'n':
+		case 'm':
+		case 'v':
+			chan->SetMode(Utils::ChanModeParamToFlag(input[2][1]), (input[2][0] == '+'));
+		break;
+
+		/* this one requires an arg no matter what */
+		case 'o': 
+			if (input.size() < 4) { Rep::E461(NR_IN, input[0]); return ;} /* missing input */
+			if (!chan->HasUser(input[3])) { Rep::E401(NR_IN, input[3]); return ;} /* user not on channel */
+
+			/* if the user is on the channel then we know they exist */
+			chan->ChangeUserOp(_nickToUserLookup[input[3]], (input[2][0] == '+')); /* Set|Unset them as OP */
+
+			msg += " " + input[3];
+		break;
+
+		/* these require an arg only in + mode */
+		case 'l':
+			if (input[2][0] == '+')
+			{
+				if (input.size() < 4) { Rep::E461(NR_IN, input[0]); return ;} /* missing input */
+				if (!Utils::IsValidNumber(input[3])) { /* Rep::E6666666();*/ return ;} /* limit is not a number, silent fail? */
+				chan->SetLimit(std::atoi(input[3].c_str()));
+				msg += " " + input[3];
+			}
+			chan->SetMode(Utils::ChanModeParamToFlag(input[2][1]), (input[2][0] == '+'));
+		break;
+
+		case 'b':
+			if (input.size() < 4) { Rep::E461(NR_IN, input[0]); return ;} /* missing input */
+			if (input[2][0] == '+')
+				chan->Ban(input[3]);
+			else
+				chan->Unban(input[3]);
+			msg += " " + input[3];
+			/* In this case, mode might not change due to having multiple banmasks, oh well*/
+			//chan->SetMode(Utils::ChanModeParamToFlag(input[2][1]), (input[2][0] == '+'));
+		break;
+
+		case 'k':
+			if (input[2][0] == '+')
+			{
+				if (input.size() < 4) { Rep::E461(NR_IN, input[0]); return ;} /* missing input */
+				chan->SetKey(input[3]);
+				//msg += " " + input[3]; /* Don't display the key in the MODE message */
+			}
+			chan->SetMode(Utils::ChanModeParamToFlag(input[2][1]), (input[2][0] == '+'));
+		break;
+	}
+	/* Notify everyone in the channel */
+	SendToAllInChannel(chan, msg);
 }

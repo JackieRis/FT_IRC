@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:13 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 17:20:19 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 00:07:14 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,11 @@ public:
 	static bool IsValidChannelName(const std::string& target);
 
 	/*
+		Check if the string is a pure number
+	*/
+	static bool IsValidNumber(const std::string& target);
+
+	/*
 		Generate a mode string for querying, can provide both for user or for channel modes
 	*/
 	static std::string GenerateModestring(int modes, bool forUser);
@@ -67,6 +72,11 @@ public:
 		Checks if the supplied mode parameter is not ill formed
 	*/
 	static bool ValidModeParam(const std::string& str, bool forUser);
+
+	/*
+		Converts a channel mode character to the enum flag associated
+	*/
+	static ChannelModeE ChanModeParamToFlag(char c);
 };
 
 # endif
