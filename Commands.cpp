@@ -314,27 +314,6 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 	}
 }
 
-/* Parameters: <target>{,<target>} <text to be sent> */
-/*
-int	Server::checkChan(std::string name)
-{
-	if (name[0] == '#')
-		return (1);
-	if (name[0] == '%')
-	{
-		if (name.size() < 4 || name[1] != '#')
-			return (-1);
-		return (2);
-	}
-	if (name[0] == '@')
-	{
-		if (name.size() < 5 || (name[1] != '%' && name[2] != '#'))
-			return (-1);
-		return (3);
-	}
-	return (0);
-}*/
-
 void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 {
 	User		*user = _user[fd];

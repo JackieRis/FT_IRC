@@ -23,7 +23,7 @@ void	Server::ChanMsg(User *sender, const std::string& msg, Channels* chan)
 	
 	for (; it != tmp.end(); ++it)
 	{
-		if (sender == *it)
+		if (sender == *it) //TODO ask for explanation because wtf ?
 			continue ;
 		
 		SocketIo& io = *_userToIoLookup[*it];
