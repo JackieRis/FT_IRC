@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/12 14:03:23 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/05 23:22:27 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,18 @@ int		Channels::GetModes() const
 bool	Channels::HasUser(User *user) const
 {
 	return (users.find(user) != users.end());
+}
+
+bool	Channels::HasUser(const std::string& user) const
+{
+	std::set<User *>::iterator it = users.begin();
+
+	for (; it != users.end(); ++it)
+	{
+		if ((*it)->GetNick() == user)
+			return (true);
+	}
+	return (false);
 }
 
 bool	Channels::IsBanned(User *user) const
