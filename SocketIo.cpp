@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/08 13:42:24 by aberneli          #+#    #+#             */
-/*   Updated: 2022/12/07 16:28:57 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/05 21:11:08 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ int	SocketIo::Send()
 {
 	std::string tmp;
 
-	os << "\r\n";
-	SocketIo::sentkb += os.str().length();
-	SocketIo::sentMsg++;
 	tmp = os.str();
 	os.clear();
 	os.str(std::string());
+	tmp = tmp.substr(0, 510) + "\r\n";
+	SocketIo::sentkb += tmp.length();
+	SocketIo::sentMsg++;
 	return (send(fd, tmp.c_str(), tmp.size(), 0));
 }
 
@@ -73,7 +73,7 @@ std::string	SocketIo::Consume()
 	is.clear();
 	tmp = tmp.substr(0, pos); // removed +2 because we don't want \r\n in the parsing
 	consumable = (is.str().find("\r\n") != std::string::npos); // check if we can consume again
-	return (tmp);
+	return (tmp.substr(0, 510)); // cap the message length to 512 (510 + the \r\n we forced out of the message), discard the rest
 }
 
 bool	SocketIo::CanConsume() const
