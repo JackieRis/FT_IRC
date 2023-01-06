@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 02:22:28 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 03:01:11 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@ Channels::Channels(const std::string& chanName, User *firstUser) : channelName(c
 
 	lastTopicEditor = firstUser->GetNick();
 	lastTopicChangeDate = channelCreationDate;
+
+	modes = CM_NONE;
+	limit = 1024;
 
 	std::cerr << "Channel " << chanName << " created" << std::endl;
 }
