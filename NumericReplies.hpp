@@ -66,7 +66,7 @@ public:
 
 	static void R381(NR_ARG);
 
-	static void R391(NR_ARG);
+	static void R391(NR_ARG, const std::string& servName);
 
 	/* Errors */
 	static void E401(NR_ARG, const std::string& inputNick);

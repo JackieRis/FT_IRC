@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 04:44:06 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 06:01:32 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -512,7 +512,7 @@ void Server::cmdTime(const std::vector<std::string>& input, int fd)
 	SocketIo	*io = _io[fd];
 
 	_cmdsCalled["TIME"]++;
-	Rep::R391(NR_IN);
+	Rep::R391(NR_IN, _servName);
 	
 	(void)input;
 }

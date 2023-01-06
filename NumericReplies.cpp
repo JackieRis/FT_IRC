@@ -225,9 +225,17 @@ void	Rep::R381(SocketIo& io, const std::string& cNick)
 	io.Send();
 }
 
-void Rep::R391(SocketIo& io, const std::string& cNick)
+void Rep::R391(SocketIo& io, const std::string& cNick, const std::string& servName)
 {
-	io << "391 " << cNick << " 42ircserv " << time(0) << " :hello I'm not a date";
+	char date_string[128];
+	time_t curr_time;
+	tm *curr_tm;
+	time(&curr_time);
+	curr_tm = localtime(&curr_time);
+
+	strftime(date_string, 50, "%c", curr_tm);
+
+	io << "391 " << cNick << " " << servName << " :" << date_string;
 	io.Send();
 }
 
