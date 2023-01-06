@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/05 23:22:27 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 02:22:28 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,20 @@ const std::vector<std::string> Channels::GetUserNameList() const
 int		Channels::GetModes() const
 {
 	return (modes);
+}
+
+int		Channels::GetVisibleUsers(User *user) const
+{
+	if (HasUser(user))
+		return (users.size());
+		
+	int visible = 0;
+	std::set<User *>::const_iterator it = users.begin();
+	for (; it != users.end(); ++it)
+	{
+		visible += ((*it)->GetMode() & UM_INVISIBLE);
+	}
+	return (visible);
 }
 
 bool	Channels::HasUser(User *user) const
