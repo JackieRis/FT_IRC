@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/05 22:31:28 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 02:54:43 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -681,11 +681,75 @@ void Server::cmdLusers(const std::vector<std::string>& input, int fd)
 	Rep::R266(NR_IN, clientNb);
 }
 
+void	Server::cmdWho(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+
+	/* TODO */
+	_cmdsCalled["WHO"]++;
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+	if (input.size() < 2 || input[1] == "0") /* Both have the same behavior */
+	{
+		Rep::R315(NR_IN);
+		return ;
+	}
+	Rep::R315(NR_IN);
+}
+
+void	Server::cmdWhois(const std::vector<std::string>& input, int fd)
+{
+	User		*user = _user[fd];
+	SocketIo	*io = _io[fd];
+
+	_cmdsCalled["WHOIS"]++;
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+	if (input.size() < 2)
+	{
+		Rep::E461(NR_IN, input[0]);
+		return ;
+	}
+
+	std::vector<std::string> nickList = Utils::ToList(input[1]);
+	std::vector<std::string>::iterator lit = nickList.begin();
+
+	for (; lit != nickList.end(); ++lit)
+	{
+		if (!_nickToUserLookup.count(*lit))
+			continue ;
+		
+		User *queryed = _nickToUserLookup[*lit];
+		
+		Rep::R311(NR_IN, queryed->GetNick(), queryed->GetName(), queryed->GetNick()); /* last one *should* be realname, oops */
+		if (queryed->IsServerOpper())
+			Rep::R313(NR_IN, queryed->GetNick());
+		std::map<std::string, Channels *>::iterator cit = _channel.begin();
+		for (; cit != _channel.end(); ++cit)
+		{
+			if (!cit->second->HasUser(queryed))
+				continue ;
+			Channels *chan = cit->second;
+			Rep::R319(NR_IN, queryed->GetNick(), chan->GetUserPrefix(queryed), chan->GetName());
+		}
+	}
+	Rep::R318(NR_IN, input[1]); /* End of list is for everything at once */
+}
+
 void	Server::cmdMotd(const std::vector<std::string>& input, int fd)
 {
 	(void)input;
 	User		*user = _user[fd];
 	SocketIo	*io = _io[fd];
+
+	_cmdsCalled["MOTD"]++;
 	std::map<std::string, std::string>::iterator	Name = _cfg.servConfig.find("name");
 	std::map<std::string, std::string>::iterator	Motd = _cfg.servConfig.find("motd");
 
@@ -939,6 +1003,10 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("NAMES"), 0));
 	_cmds.insert(std::make_pair(std::string("LUSERS"), &Server::cmdLusers));
 	_cmdsCalled.insert(std::make_pair(std::string("LUSERS"), 0));
+	_cmds.insert(std::make_pair(std::string("WHO"), &Server::cmdWho));
+	_cmdsCalled.insert(std::make_pair(std::string("WHO"), 0));
+	_cmds.insert(std::make_pair(std::string("WHOIS"), &Server::cmdWhois));
+	_cmdsCalled.insert(std::make_pair(std::string("WHOIS"), 0));
 	_cmds.insert(std::make_pair(std::string("INVITE"), &Server::cmdInvite));
 	_cmdsCalled.insert(std::make_pair(std::string("INVITE"), 0));
 	_cmds.insert(std::make_pair(std::string("PART"), &Server::cmdPart));

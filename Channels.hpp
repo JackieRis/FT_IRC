@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 02:18:02 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 02:45:05 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ class Channels
 	void	ChangeUserVoice(User *user, bool state);
 
 	// Getters
-	const std::set<User *>			&GetUsers() const;
+	const std::set<User *>&			GetUsers() const;
 	const std::string&				GetName() const;
 	const std::vector<std::string>	GetUserNickList() const;
 	const std::vector<std::string>	GetUserNameList() const;

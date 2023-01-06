@@ -39,6 +39,11 @@ public:
 	static void R265(NR_ARG, int users);
 	static void R266(NR_ARG, int users);
 
+	static void R311(NR_ARG, const std::string& queryNick, const std::string& queryName, const std::string& queryRealName);
+	static void R313(NR_ARG, const std::string& queryNick);
+	static void R315(NR_ARG);
+	static void R318(NR_ARG, const std::string& queryList);
+	static void R319(NR_ARG, const std::string& queryNick, char prefix, const std::string& chanName);
 	static void	R322(NR_ARG, int nuser, const std::string& topic, const std::string& ChanName);
 	static void	R323(NR_ARG);
 
@@ -49,6 +54,8 @@ public:
 	static void R333(NR_ARG, const std::string& chanName, const std::string& setterNick, time_t timestamp);
 
 	static void R341(NR_ARG, const std::string& otherNick, const std::string& chanName);
+
+	static void R352(NR_ARG);
 
 	static void R353(NR_ARG, const std::string& chanName, const std::string& nick, char chanPrefix, char userPrefix);
 	static void R366(NR_ARG, const std::string& chanName);

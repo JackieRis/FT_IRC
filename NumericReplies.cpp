@@ -105,6 +105,39 @@ void Rep::R266(SocketIo& io, const std::string& cNick, int users)
 	io.Send();
 }
 
+void Rep::R311(SocketIo& io, const std::string& cNick, const std::string& queryNick, const std::string& queryName, const std::string& queryRealName)
+{
+	io << "311 " << cNick << " " << queryNick << " " << queryName << " * * :" << queryRealName;
+	io.Send();
+}
+
+void Rep::R313(SocketIo& io, const std::string& cNick, const std::string& queryNick)
+{
+	io << "313 " << cNick << " " << queryNick << " :Is an IRC operator";
+	io.Send();
+}
+
+void Rep::R315(SocketIo& io, const std::string& cNick)
+{
+	io << "315 " << cNick << " :End of Who query";
+	io.Send();
+}
+
+void Rep::R318(SocketIo& io, const std::string& cNick, const std::string& queryList)
+{
+	io << "318 " << cNick << " " << queryList << " :End of /WHOIS list";
+	io.Send();
+}
+
+void Rep::R319(SocketIo& io, const std::string& cNick, const std::string& queryNick, char prefix, const std::string& chanName)
+{
+	io << "319 " << cNick << " " << queryNick << " :";
+	if (prefix != 'u')
+	 	io << prefix;
+	io << chanName;
+	io.Send();
+}
+
 void Rep::R324(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& chanModeStr, const std::string& chanModeArgs)
 {
 	io << "324 " << cNick << " " << chanName << " " << chanModeStr << " " << chanModeArgs;
@@ -144,6 +177,12 @@ void Rep::R333(SocketIo& io, const std::string& cNick, const std::string& chanNa
 void Rep::R341(SocketIo& io, const std::string& cNick, const std::string& otherNick, const std::string& chanName)
 {
 	io << "341 " << cNick << " " << otherNick << " " << chanName;
+	io.Send();
+}
+
+void Rep::R352(SocketIo& io, const std::string& cNick)
+{
+	io << "352 " << cNick << " :End of Who query";
 	io.Send();
 }
 
@@ -229,7 +268,7 @@ void Rep::E421(SocketIo& io, const std::string& cNick, const std::string& cmd)
 	io.Send();
 }
 
-void	Rep::E422(SocketIo& io, const std::string& cNick)
+void Rep::E422(SocketIo& io, const std::string& cNick)
 {
 	io << "422 " << cNick << " :No MOTD in config File";
 	io.Send();

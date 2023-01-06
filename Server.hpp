@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:47:18 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/12 14:18:48 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 00:40:15 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ protected:
 	void	cmdStats(const std::vector<std::string>& input, int fd);
 	void	cmdNames(const std::vector<std::string>& input, int fd);
 	void	cmdLusers(const std::vector<std::string>& input, int fd);
+	void	cmdWho(const std::vector<std::string>& input, int fd);
+	void	cmdWhois(const std::vector<std::string>& input, int fd);
 	void	cmdMotd(const std::vector<std::string>& input, int fd);
 	void	cmdList(const std::vector<std::string>& input, int fd);
 
