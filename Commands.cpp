@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 03:42:27 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 04:44:06 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -923,6 +923,7 @@ void	Server::cmdList(const std::vector<std::string>& input, int fd)
 	std::map<std::string, Channels *>::iterator	Mend = _channel.end();
 	int			nuser = 0;
 
+	_cmdsCalled["LIST"]++;
 	if (input.size() == 1)
 	{
 		for (; Mit != Mend; ++Mit)
