@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 03:21:11 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 03:42:27 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,10 +253,13 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 		if (!creator)
 		{
 			int flags = chan->GetModes();
-			if (flags & CM_LIMIT && chan->GetSize() >= chan->GetLimit()) /* Channel is limited and full */
+			if (flags & CM_LIMIT) /* Channel is limited and full */
 			{
-				Rep::E471(NR_IN, chan->GetName());
-				continue ;
+				if (chan->GetSize() >= chan->GetLimit())
+				{
+					Rep::E471(NR_IN, chan->GetName());
+					continue ;
+				}
 			}
 
 			if (flags & CM_INVITEONLY) /* Invite only, don't accept */
@@ -287,27 +290,16 @@ void Server::cmdJoin(const std::vector<std::string>& input, int fd)
 			chan->AddUser(user);
 		}
 
-		const std::set<User *>& usrList = chan->GetUsers();
 		std::stringstream msg;
 		msg << ":" << user->GetNick() << " JOIN " << chan->GetName();
-
-		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
-		{
-			SocketIo	*chanUserIo = _userToIoLookup[*uit];
-			
-			//if (!chanUserIo)
-			//	continue ;
-			/* If we ever crash put this back in or use actual map usage protection */
-
-			(*chanUserIo) << msg.str();
-			chanUserIo->Send();
-		}
+		SendToAllInChannel(chan, msg.str());
 
 		/* Send Topic if not empty */
 		if (!chan->GetTopic().empty())
 			Rep::R332(NR_IN, chan->GetName(), chan->GetTopic());
 		
 		/* Send channel user list as nicks */
+		const std::set<User *>& usrList = chan->GetUsers();
 		for (std::set<User *>::const_iterator uit = usrList.begin(); uit != usrList.end(); ++uit)
 			Rep::R353(NR_IN, chan->GetName(), (*uit)->GetNick(), chan->GetChanPrefix(), chan->GetUserPrefix((*uit)));
 		Rep::R366(NR_IN, chan->GetName());
