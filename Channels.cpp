@@ -121,7 +121,7 @@ int		Channels::GetVisibleUsers(User *user) const
 	std::set<User *>::const_iterator it = users.begin();
 	for (; it != users.end(); ++it)
 	{
-		visible += (!(*it)->GetMode() & UM_INVISIBLE);
+		visible += !((*it)->GetMode() & UM_INVISIBLE);
 	}
 	return (visible);
 }
