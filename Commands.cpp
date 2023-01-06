@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 06:01:32 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 06:33:15 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,20 @@ void Server::cmdUser(const std::vector<std::string>& input, int fd) /* must add 
 		return ;
 	}
 
+	if (!user->GetPass())
+	{
+		Rep::E464(NR_IN);
+		user->SetHasDisconnected();
+		return ;
+	}
+
 	if (input.size() < 5)
 	{
 		/* Make this a NumericReply utility */
 		Rep::E461(NR_IN, input[0]); /* check if string is correct */
 		return ;
 	}
+	
 	user->SetName(input[1]);
 	user->SetRealName(input[4]);
 
@@ -82,6 +90,13 @@ void Server::cmdNick(const std::vector<std::string>& input, int fd) /* must chec
 	if (input.size() < 2)
 	{
 		Rep::E431(NR_IN);
+		return ;
+	}
+
+	if (!user->GetPass())
+	{
+		Rep::E464(NR_IN);
+		user->SetHasDisconnected();
 		return ;
 	}
 	
