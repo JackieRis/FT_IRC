@@ -162,7 +162,7 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 	}
 
 	std::string msg;
-	msg += ":" + user->GetNick() + " MODE " + input[2] + " " + input[3];
+	msg += ":" + user->GetNick() + " MODE " + input[2];
 
 	switch (input[2][1])
 	{
