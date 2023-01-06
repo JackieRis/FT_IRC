@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 03:13:32 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/06 03:21:11 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -936,15 +936,21 @@ void	Server::cmdList(const std::vector<std::string>& input, int fd)
 		for (; Mit != Mend; ++Mit)
 		{
 			nuser = Mit->second->GetVisibleUsers(user);
-			if (Mit->second->HasUser(user->GetName()))
+			if (Mit->second->HasUser(user))
 			{	
 				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
 				Rep::R323(NR_IN);
 				continue ;
 			}
-			if (Mit->second->GetModes() & CM_PRIVATE)
+			
+			if (Mit->second->GetModes() & CM_PRIVATE && !(Mit->second->GetModes() & CM_SECRET))
 			{
 				Rep::R322(NR_IN, nuser, " ", "Prv");
+				Rep::R323(NR_IN);
+			}
+			else if (!(Mit->second->GetModes() & CM_SECRET))
+			{
+				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
 				Rep::R323(NR_IN);
 			}
 
