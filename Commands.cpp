@@ -939,48 +939,40 @@ void	Server::cmdList(const std::vector<std::string>& input, int fd)
 			if (Mit->second->HasUser(user))
 			{	
 				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
-				Rep::R323(NR_IN);
 				continue ;
 			}
 			
 			if (Mit->second->GetModes() & CM_PRIVATE && !(Mit->second->GetModes() & CM_SECRET))
-			{
 				Rep::R322(NR_IN, nuser, " ", "Prv");
-				Rep::R323(NR_IN);
-			}
 			else if (!(Mit->second->GetModes() & CM_SECRET))
-			{
 				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
-				Rep::R323(NR_IN);
-			}
-
-			/*
-			if (Mit->second->GetModes()& CM_PRIVATE)
-			{
-				if (Mit->second->HasUser(user->GetName()))
-				{	
-					Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
-					Rep::R323(NR_IN);
-				}
-				else
-				{	
-					Rep::R322(NR_IN, nuser, " ", Mit->second->GetName());
-					Rep::R323(NR_IN);
-				}
-			}
-			else if (Mit->second->GetModes()& CM_SECRET && Mit->second->HasUser(user->GetName()))
-			{
-				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
-				Rep::R323(NR_IN);
-			}
-			else if (!(Mit->second->GetModes()& CM_PRIVATE))
-			{
-				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
-				Rep::R323(NR_IN);
-			}*/
 		}
+		Rep::R323(NR_IN);
 		return ;
 	}
+	std::vector<std::string>			tmp = Utils::ToList(input[1]);
+	std::vector<std::string>::iterator	it = tmp.begin();
+	std::vector<std::string>::iterator	itend = tmp.end();
+
+	for (; it != itend; ++it)
+	{
+		Mit = _channel.find(*it);
+		if (Mit != Mend)
+		{
+			nuser = Mit->second->GetVisibleUsers(user);
+			if (Mit->second->HasUser(user))
+			{	
+				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
+				continue ;
+			}
+			
+			if (Mit->second->GetModes() & CM_PRIVATE && !(Mit->second->GetModes() & CM_SECRET))
+				Rep::R322(NR_IN, nuser, " ", "Prv");
+			else if (!(Mit->second->GetModes() & CM_SECRET))
+				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
+		}
+	}
+	Rep::R323(NR_IN);
 }
 
 /* 
