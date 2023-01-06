@@ -867,10 +867,11 @@ void	Server::cmdList(const std::vector<std::string>& input, int fd)
 	std::map<std::string, Channels *>::iterator	Mend = _channel.end();
 	int			nuser = 0;
 
-	if (input.size() != 1)
+	if (input.size() == 1)
 	{
 		for (; Mit != Mend; ++Mit)
 		{
+			nuser = Mit->second->GetVisibleUsers(user);
 			if (Mit->second->GetModes()& CM_PRIVATE)
 			{
 				if (Mit->second->HasUser(user->GetName()))
