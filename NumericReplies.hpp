@@ -44,6 +44,9 @@ public:
 	static void R315(NR_ARG);
 	static void R318(NR_ARG, const std::string& queryList);
 	static void R319(NR_ARG, const std::string& queryNick, char prefix, const std::string& chanName);
+	static void	R322(NR_ARG, int nuser, const std::string& topic, const std::string& ChanName);
+	static void	R323(NR_ARG);
+
 	static void R324(NR_ARG, const std::string& chanName, const std::string& chanModeStr, const std::string& chanModeArgs);
 
 	static void R331(NR_ARG, const std::string& chanName);

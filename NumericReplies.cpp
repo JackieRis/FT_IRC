@@ -144,6 +144,18 @@ void Rep::R324(SocketIo& io, const std::string& cNick, const std::string& chanNa
 	io.Send();
 }
 
+void	Rep::R322(SocketIo& io, const std::string& cNick, int nuser, const std::string& topic, const std::string& chanName)
+{
+	io << "322 " << cNick << " " << chanName << " " << nuser << " :" << topic;
+	io.Send();
+}
+
+void	Rep::R323(SocketIo& io, const std::string& cNick)
+{
+	io << "323 " << cNick << " :End of LIST";
+	io.Send();
+}
+
 void Rep::R331(SocketIo& io, const std::string& cNick, const std::string& chanName)
 {
 	io << "331 " << cNick << " " << chanName << " :No topic set";
