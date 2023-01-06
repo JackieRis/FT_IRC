@@ -93,6 +93,7 @@ protected:
 	void	cmdNames(const std::vector<std::string>& input, int fd);
 	void	cmdLusers(const std::vector<std::string>& input, int fd);
 	void	cmdMotd(const std::vector<std::string>& input, int fd);
+	void	cmdList(const std::vector<std::string>& input, int fd);
 
 	// Communication
 	void	cmdJoin(const std::vector<std::string>& input, int fd);

@@ -851,6 +851,54 @@ void	Server::cmdOper(const std::vector<std::string>& input, int fd)
 	}
 }
 
+/*	
+	list: sans arguments, donne une liste de tout les channels du server avec leur topic
+	Les channels en PRV sont affichés mais le topic n'est pas précisé
+	Les channels en SECRET n'affichent rien
+
+	Si arguments, affiches les channels en arguments uniquement, tout en suivant les règles juste au dessus
+*/
+
+void	Server::cmdList(const std::vector<std::string>& input, int fd)
+{
+	SocketIo*	io = _io[fd];
+	User*		user = _user[fd];
+	std::map<std::string, Channels *>::iterator Mit = _channel.begin();
+	std::map<std::string, Channels *>::iterator	Mend = _channel.end();
+	int			nuser = 0;
+
+	if (input.size() != 1)
+	{
+		for (; Mit != Mend; ++Mit)
+		{
+			if (Mit->second->GetModes()& CM_PRIVATE)
+			{
+				if (Mit->second->HasUser(user->GetName()))
+				{	
+					Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
+					Rep::R323(NR_IN);
+				}
+				else
+				{	
+					Rep::R322(NR_IN, nuser, " ", Mit->second->GetName());
+					Rep::R323(NR_IN);
+				}
+			}
+			else if (Mit->second->GetModes()& CM_SECRET && Mit->second->HasUser(user->GetName()))
+			{
+				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
+				Rep::R323(NR_IN);
+			}
+			else if (!(Mit->second->GetModes()& CM_PRIVATE))
+			{
+				Rep::R322(NR_IN, nuser, Mit->second->GetTopic(), Mit->second->GetName());
+				Rep::R323(NR_IN);
+			}
+		}
+		return ;
+	}
+}
+
 /* 
 	We're using a map as a lookup to member function
 */
@@ -896,4 +944,6 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("PART"), 0));
 	_cmds.insert(std::make_pair(std::string("MOTD"), &Server::cmdMotd));
 	_cmdsCalled.insert(std::make_pair(std::string("MOTD"), 0));
+	_cmds.insert(std::make_pair(std::string("LIST"), &Server::cmdList));
+	_cmdsCalled.insert(std::make_pair(std::string("LIST"), 0));
 }
