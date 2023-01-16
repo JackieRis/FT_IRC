@@ -136,8 +136,12 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 	{
 		std::string modestring = Utils::GenerateModestring(chan->GetModes(), false);
 		std::string argstring = Utils::GenerateArgstring(chan);
-		// banlist
-		// banlist end
+		const std::vector<std::string> banList = chan->GetUserBanList();
+		for (std::vector<std::string>::const_iterator bit = banList.begin(); bit != banList.end(); ++bit)
+		{
+			if (!(*bit).empty()) /* The channel bans query code may return empty strings, so skip them */
+				Rep::R367(NR_IN, chan->GetName(), *bit);
+		}
 		Rep::R324(NR_IN, chan->GetName(), modestring, argstring);
 		return ;
 	}
@@ -172,7 +176,6 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 		case 't':
 		case 'n':
 		case 'm':
-		case 'v':
 			chan->SetMode(Utils::ChanModeParamToFlag(input[2][1]), (input[2][0] == '+'));
 		break;
 
@@ -185,6 +188,16 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 			chan->ChangeUserOp(_nickToUserLookup[input[3]], (input[2][0] == '+')); /* Set|Unset them as OP */
 
 			msg += " " + input[3];
+		break;
+
+		case 'v':
+			if (input.size() < 4) { Rep::E461(NR_IN, input[0]); return ;} /* missing input */
+			std::map<std::string, User *>::iterator uit = _nickToUserLookup.find(input[3]);
+
+			if (uit == _nickToUserLookup.end()) { Rep::E401(NR_IN, input[3]); return;} /* no such user */
+			if (!chan->HasUser(uit->second)) { Rep::E442(NR_IN, chan->GetName()); return;} /* user not on channel */
+
+			chan->ChangeUserVoice(uit->second, (input[2][0] == '+'));
 		break;
 
 		/* these require an arg only in + mode */
@@ -201,7 +214,6 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 		case 'b':
 			if (input.size() < 4)
 			{
-				std::cout << "has bans " << chan->HasBans() << std::endl;
 				const std::vector<std::string> banList = chan->GetUserBanList();
 				for (std::vector<std::string>::const_iterator bit = banList.begin(); bit != banList.end(); ++bit)
 				{

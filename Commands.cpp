@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tnguyen- <tnguyen-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/16 14:04:21 by tnguyen-         ###   ########.fr       */
+/*   Updated: 2023/01/16 14:20:02 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,7 +366,7 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 				Rep::E404(NR_IN, Sit->first);
 				continue ;
 			}
-			if ((Sit->second->GetModes() & CM_VOICE && Sit->second->GetModes() & CM_MODERATED) && !(Sit->second->IsOpped(user) || Sit->second->IsVoice(user) ))
+			if (Sit->second->GetModes() & CM_MODERATED && !(Sit->second->IsOpped(user) || Sit->second->IsVoice(user)) )
 			{
 				Rep::E404(NR_IN, Sit->first);
 				continue ;
@@ -418,7 +418,7 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 				continue ;
 			if (Sit->second->IsBanned(user))
 				continue ;
-			if ((Sit->second->GetModes() & CM_VOICE && Sit->second->GetModes() & CM_MODERATED) && !(Sit->second->IsOpped(user) || Sit->second->IsVoice(user) ))
+			if (Sit->second->GetModes() & CM_MODERATED && !(Sit->second->IsOpped(user) || Sit->second->IsVoice(user)) )
 				continue ;
 			ChanMsg(user, input[2], Sit->second, " NOTICE ");
 		}
