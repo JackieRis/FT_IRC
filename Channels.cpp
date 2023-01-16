@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/16 11:07:34 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/16 13:42:19 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,12 +170,16 @@ bool	Channels::IsBanned(User *user) const
 bool	Channels::IsOpped(User *user) const
 {
 	std::map<User *, ChanUserFlags>::const_iterator it = userflags.find(user);
+	if (it == userflags.end())
+		return (false);
 	return (it->second.op);
 }
 
 bool	Channels::IsVoice(User *user) const
 {
 	std::map<User *, ChanUserFlags>::const_iterator it = userflags.find(user);
+	if (it == userflags.end())
+		return (false);
 	return (it->second.voice);
 }
 
