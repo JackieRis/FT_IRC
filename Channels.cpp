@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/16 13:42:19 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/16 13:43:16 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,9 @@ char	Channels::GetChanPrefix() const
 char	Channels::GetUserPrefix(User *user) const
 {
 	std::map<User *, ChanUserFlags>::const_iterator it = userflags.find(user);
+
+	if (it == userflags.end())
+		return ('u');
 	
 	if (it->second.op)
 		return ('@');
