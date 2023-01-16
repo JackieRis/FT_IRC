@@ -192,12 +192,10 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 
 		case 'v':
 			if (input.size() < 4) { Rep::E461(NR_IN, input[0]); return ;} /* missing input */
-			std::map<std::string, User *>::iterator uit = _nickToUserLookup.find(input[3]);
+			if (_nickToUserLookup.find(input[3]) == _nickToUserLookup.end()) { Rep::E401(NR_IN, input[3]); return;} /* no such user */
+			if (!chan->HasUser(input[3])) { Rep::E442(NR_IN, chan->GetName()); return;} /* user not on channel */
 
-			if (uit == _nickToUserLookup.end()) { Rep::E401(NR_IN, input[3]); return;} /* no such user */
-			if (!chan->HasUser(uit->second)) { Rep::E442(NR_IN, chan->GetName()); return;} /* user not on channel */
-
-			chan->ChangeUserVoice(uit->second, (input[2][0] == '+'));
+			chan->ChangeUserVoice(_nickToUserLookup.find(input[3])->second, (input[2][0] == '+'));
 		break;
 
 		/* these require an arg only in + mode */
