@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/16 14:20:02 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/16 15:24:38 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1010,6 +1010,59 @@ void	Server::cmdList(const std::vector<std::string>& input, int fd)
 	Rep::R323(NR_IN);
 }
 
+void	Server::cmdKick(const std::vector<std::string>& input, int fd)
+{
+	SocketIo*	io = _io[fd];
+	User*		user = _user[fd];
+	Channels	*chan;
+
+	_cmdsCalled["KICK"]++;
+	if (!user->GetRegistered())
+	{
+		Rep::E451(NR_IN);
+		return ;
+	}
+	if (input.size() < 3)
+	{
+		Rep::E461(NR_IN, input[0]);
+		return ;
+	}
+	if (!_channel.count(input[1]))
+	{
+		Rep::E403(NR_IN, input[1]);
+		return ;
+	}
+
+	chan = _channel[input[1]];
+
+	if (!chan->HasUser(user))
+	{
+		Rep::E442(NR_IN, chan->GetName());
+		return ;
+	}
+
+	if (!chan->IsOpped(user))
+	{
+		Rep::E482(NR_IN, chan->GetName());
+		return ;
+	}
+
+	if (!chan->HasUser(input[2]))
+	{
+		// NOT ON CHANNEL
+		return ;
+	}
+
+	std::string msg = ":";
+	msg += user->GetNick() + " KICK " + chan->GetName() + " " + input[2];
+	if (input.size() >= 4)
+		msg += " " + input[3];
+
+	SendToAllInChannel(chan, msg);
+	chan->RemoveUser(_nickToUserLookup[input[2]]);
+	removeAllChannels(true);
+}
+
 /* 
 	We're using a map as a lookup to member function
 */
@@ -1061,4 +1114,6 @@ void Server::initCmds()
 	_cmdsCalled.insert(std::make_pair(std::string("MOTD"), 0));
 	_cmds.insert(std::make_pair(std::string("LIST"), &Server::cmdList));
 	_cmdsCalled.insert(std::make_pair(std::string("LIST"), 0));
+	_cmds.insert(std::make_pair(std::string("KICK"), &Server::cmdKick));
+	_cmdsCalled.insert(std::make_pair(std::string("KICK"), 0));
 }
