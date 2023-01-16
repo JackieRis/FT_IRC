@@ -16,18 +16,18 @@ Server::Server(): _cfg(), _port(8080), _password("") {}
 
 Server::Server(int port, std::string password): _cfg(), _port(port), _password(password) {}
 
-void	Server::ChanMsg(User *sender, const std::string& msg, Channels* chan)
+void	Server::ChanMsg(User *sender, const std::string& msg, Channels* chan, std::string type)
 {
 	const std::set<User *>&				tmp = chan->GetUsers();
 	std::set<User *>::const_iterator	it = tmp.begin();
 	
 	for (; it != tmp.end(); ++it)
 	{
-		if (sender == *it) //TODO ask for explanation because wtf ?
+		if (sender == *it)
 			continue ;
 		
 		SocketIo& io = *_userToIoLookup[*it];
-		io << ":" << (*it)->GetNick() << " PRIVMSG " << chan->GetName() <<  " " << msg;
+		io << ":" << sender->GetNick() << type << chan->GetName() <<  " " << msg;
 		io.Send();
 	}
 }

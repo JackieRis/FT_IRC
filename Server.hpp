@@ -61,7 +61,7 @@ protected:
 	std::map<std::string, int>			_cmdsCalled;
 
 	/** Server.cpp **/
-	void	ChanMsg(User *sender, const std::string& msg, Channels* chan);
+	void	ChanMsg(User *sender, const std::string& msg, Channels* chan, std::string type);
 	void	acceptClient();
 	void	manageClient(int fd);
 	void	disconnectClient(int fd);

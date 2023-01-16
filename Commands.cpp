@@ -353,7 +353,7 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 		std::cout << *it << std::endl;
 		std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
 		if (!(Utils::IsChannel(*it) == false || Sit == _channel.end()))
-			ChanMsg(user, input[2], Sit->second);
+			ChanMsg(user, input[2], Sit->second, " PRIVMSG ");
 		else
 		{
 			std::vector<std::string>::iterator	userIt;
@@ -362,7 +362,7 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 				userIt = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
 				if (userIt != tmp.end())
 				{
-					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
+					(*_io[Mit->first]) << ":" << user->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
 					(*_io[Mit->first]).Send();
 				}
 			}
@@ -394,7 +394,7 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 		std::cout << *it << std::endl;
 		std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
 		if (!(Utils::IsChannel(*it) == false || Sit == _channel.end()))
-			ChanMsg(user, input[2], Sit->second);
+			ChanMsg(user, input[2], Sit->second, " NOTICE ");
 		else
 		{
 			std::vector<std::string>::iterator	userIt;
@@ -403,7 +403,7 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 				userIt = std::find(tmp.begin(), tmp.end(), Mit->second->GetNick());
 				if (userIt != tmp.end())
 				{
-					(*_io[Mit->first]) << ":" << _user[fd]->GetNick() << " PRIVMSG " << Mit->second->GetNick() << " " << input[2];
+					(*_io[Mit->first]) << ":" << user->GetNick() << " NOTICE " << Mit->second->GetNick() << " " << input[2];
 					(*_io[Mit->first]).Send();
 				}
 			}
