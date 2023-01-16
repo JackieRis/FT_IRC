@@ -196,6 +196,7 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 			if (!chan->HasUser(input[3])) { Rep::E442(NR_IN, chan->GetName()); return;} /* user not on channel */
 
 			chan->ChangeUserVoice(_nickToUserLookup.find(input[3])->second, (input[2][0] == '+'));
+			msg += " " + input[3];
 		break;
 
 		/* these require an arg only in + mode */
