@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/16 13:43:16 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/16 13:45:02 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ bool	Channels::HasUser(const std::string& user) const
 
 bool	Channels::IsBanned(User *user) const
 {
-	return (banned.count(user->GetNick()) || banned.count(user->GetName()) || banned.count(std::string("*")));
+	return (banned.count(user->GetNick()) || banned.count(std::string("*")));
 }
 
 bool	Channels::IsOpped(User *user) const
