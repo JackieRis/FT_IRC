@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tnguyen- <tnguyen-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 06:33:15 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/16 14:04:21 by tnguyen-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,6 +344,8 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 		return ;
 	}
 	
+		/* (chan->GetModes() & CM_VOICE && chan->GetModes() & CM_MODERATED) ) && !(chan->IsOpped(user) || chan->IsVoice(user) ) */
+	
 	std::vector<std::string>			tmp = Utils::ToList(input[1]);
 	std::vector<std::string>::iterator	it = tmp.begin();
 	std::map<int,User *>::iterator		Mit = _user.begin();
@@ -353,7 +355,24 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 		std::cout << *it << std::endl;
 		std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
 		if (!(Utils::IsChannel(*it) == false || Sit == _channel.end()))
+		{
+			if (Sit->second->GetModes() & CM_NOEXTERNAL && !Sit->second->HasUser(user))
+			{
+				Rep::E404(NR_IN, Sit->first);
+				continue ;
+			}
+			if (Sit->second->IsBanned(user))
+			{
+				Rep::E404(NR_IN, Sit->first);
+				continue ;
+			}
+			if ((Sit->second->GetModes() & CM_VOICE && Sit->second->GetModes() & CM_MODERATED) && !(Sit->second->IsOpped(user) || Sit->second->IsVoice(user) ))
+			{
+				Rep::E404(NR_IN, Sit->first);
+				continue ;
+			}
 			ChanMsg(user, input[2], Sit->second, " PRIVMSG ");
+		}
 		else
 		{
 			std::vector<std::string>::iterator	userIt;
@@ -394,7 +413,15 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 		std::cout << *it << std::endl;
 		std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
 		if (!(Utils::IsChannel(*it) == false || Sit == _channel.end()))
+		{	
+			if (Sit->second->GetModes() & CM_NOEXTERNAL && !Sit->second->HasUser(user))
+				continue ;
+			if (Sit->second->IsBanned(user))
+				continue ;
+			if ((Sit->second->GetModes() & CM_VOICE && Sit->second->GetModes() & CM_MODERATED) && !(Sit->second->IsOpped(user) || Sit->second->IsVoice(user) ))
+				continue ;
 			ChanMsg(user, input[2], Sit->second, " NOTICE ");
+		}
 		else
 		{
 			std::vector<std::string>::iterator	userIt;
