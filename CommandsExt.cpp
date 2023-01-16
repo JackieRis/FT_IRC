@@ -154,7 +154,7 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 	}
 	if (!chan->IsOpped(user))
 	{
-		Rep::E442(NR_IN, chan->GetName());
+		Rep::E482(NR_IN, chan->GetName());
 		return ;
 	}
 
