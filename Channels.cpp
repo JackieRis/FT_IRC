@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 03:01:11 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/16 11:07:34 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,25 @@ const std::vector<std::string> Channels::GetUserNameList() const
 	return (lst);
 }
 
+const std::vector<std::string> Channels::GetUserBanList() const
+{
+	std::vector<std::string> lst;
+
+	lst.resize(banned.size());
+	for (std::set<std::string>::iterator it = banned.begin(); it != banned.end(); ++it)
+	{
+		std::string res = *it;
+		res += "!*@*";
+		lst.push_back(res);
+	}
+	return (lst);
+}
+
+bool	Channels::HasBans() const
+{
+	return (banned.size());
+}
+
 int		Channels::GetModes() const
 {
 	return (modes);
@@ -145,7 +164,7 @@ bool	Channels::HasUser(const std::string& user) const
 
 bool	Channels::IsBanned(User *user) const
 {
-	return (banned.count(user->GetNick()) || banned.count(user->GetName()));
+	return (banned.count(user->GetNick()) || banned.count(user->GetName()) || banned.count(std::string("*")));
 }
 
 bool	Channels::IsOpped(User *user) const

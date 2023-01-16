@@ -201,6 +201,18 @@ void Rep::R366(SocketIo& io, const std::string& cNick, const std::string& chanNa
 	io.Send();
 }
 
+void Rep::R367(SocketIo& io, const std::string& cNick, const std::string& chanName, const std::string& bannedUser)
+{
+	io << "367 " << cNick << " " << chanName << " " + bannedUser;
+	io.Send();
+}
+
+void Rep::R368(SocketIo& io, const std::string& cNick, const std::string& chanName)
+{
+	io << "368 " << cNick << " " << chanName << " :End of channel ban list";
+	io.Send();
+}
+
 void	Rep::R372(SocketIo& io, const std::string& cNick, const std::string& Motd)
 {
 	io << "372 " << cNick << " :" << Motd;

@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 02:45:05 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/16 10:55:48 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ class Channels
 	const std::string&				GetName() const;
 	const std::vector<std::string>	GetUserNickList() const;
 	const std::vector<std::string>	GetUserNameList() const;
+	const std::vector<std::string>	GetUserBanList() const;
+	bool							HasBans() const;
 	int								GetModes() const;
 	int								GetVisibleUsers(User *user) const;
 	bool							HasUser(User *user) const;

@@ -60,6 +60,9 @@ public:
 	static void R353(NR_ARG, const std::string& chanName, const std::string& nick, char chanPrefix, char userPrefix);
 	static void R366(NR_ARG, const std::string& chanName);
 
+	static void R367(NR_ARG, const std::string& chanName, const std::string& bannedUser);
+	static void R368(NR_ARG, const std::string& chanName);
+
 	static void	R375(NR_ARG, const std::string& serverName);
 	static void	R372(NR_ARG, const std::string& Motd);
 	static void	R376(NR_ARG);

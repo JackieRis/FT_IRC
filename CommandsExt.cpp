@@ -161,8 +161,7 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 		return ;
 	}
 
-	std::string msg;
-	msg += ":" + user->GetNick() + " MODE " + input[2];
+	std::string msg = ":" + user->GetNick() + " MODE " + chan->GetName() + " " + input[2];
 
 	switch (input[2][1])
 	{
@@ -195,20 +194,29 @@ void Server::ChannelMode(const std::vector<std::string>& input, int fd)
 				if (input.size() < 4) { Rep::E461(NR_IN, input[0]); return ;} /* missing input */
 				if (!Utils::IsValidNumber(input[3])) { /* Rep::E6666666();*/ return ;} /* limit is not a number, silent fail? */
 				chan->SetLimit(std::atoi(input[3].c_str()));
-				msg += " " + input[3];
 			}
 			chan->SetMode(Utils::ChanModeParamToFlag(input[2][1]), (input[2][0] == '+'));
 		break;
 
 		case 'b':
-			if (input.size() < 4) { Rep::E461(NR_IN, input[0]); return ;} /* missing input */
+			if (input.size() < 4)
+			{
+				std::cout << "has bans " << chan->HasBans() << std::endl;
+				const std::vector<std::string> banList = chan->GetUserBanList();
+				for (std::vector<std::string>::const_iterator bit = banList.begin(); bit != banList.end(); ++bit)
+				{
+					if (!(*bit).empty()) /* The channel bans query code may return empty strings, so skip them */
+						Rep::R367(NR_IN, chan->GetName(), *bit);
+				}
+				Rep::R368(NR_IN, chan->GetName());
+				return ;
+			}
 			if (input[2][0] == '+')
 				chan->Ban(input[3]);
 			else
 				chan->Unban(input[3]);
-			msg += " " + input[3];
-			/* In this case, mode might not change due to having multiple banmasks, oh well*/
-			//chan->SetMode(Utils::ChanModeParamToFlag(input[2][1]), (input[2][0] == '+'));
+			chan->SetMode(Utils::ChanModeParamToFlag(input[2][1]), chan->HasBans());
+			return ;
 		break;
 
 		case 'k':
