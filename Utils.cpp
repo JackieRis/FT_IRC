@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 18:53:43 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/06 00:15:43 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/16 13:07:20 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,14 @@ std::vector<std::string>	Utils::ToParamList(const std::string& input)
 			tmp = "";
 			continue ;
 		}
-		if (*it == ':')
+		if (*it == ':' && !textFlag)
 		{
-			if (!tmp.empty()) /* Protocol tells us that : shall be preceeded by SPACE, guess I should throw an exception instead*/
-			{
+			if (tmp.empty()) /* RFC requires that ':' for text is preceeded by space. If it's not the case just keep going */
+				textFlag = true;
+			/*{
 				res.push_back(tmp);
 				tmp = "";
-			}
-			textFlag = true;
+			}*/
 		}
 		tmp += *it;
 	}
