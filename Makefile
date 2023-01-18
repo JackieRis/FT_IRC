@@ -21,16 +21,14 @@ HEADER = Server.hpp User.hpp Channels.hpp \
 
 NAME = ircserv
 
-MAKEFILEV = Makefile
-
 FLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g3
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(HEADER) $(MAKEFILEV)
+$(NAME): $(OBJ) $(HEADER)
 	c++ $(FLAGS) -o $(NAME) $(OBJ)
 
-%.o: %.cpp $(HEADER) $(MAKEFILEV)
+%.o: %.cpp $(HEADER)
 	c++ $(FLAGS) -c $< -o $@
 
 clean:
