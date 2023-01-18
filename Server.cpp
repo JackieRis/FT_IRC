@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:48:58 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/12 12:10:56 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 10:36:47 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void Server::welcomeUser(int fd)
 	user->SetRegistered(true);
 	Rep::R001(NR_IN);
 	Rep::R002(NR_IN, _servName, "1.0");
-	Rep::R003(NR_IN, "12/04/2022 13:30"); // use the server timestamp to generate a date
+	Rep::R003(NR_IN, _startupDateFormatted);
 	Rep::R004(NR_IN);
 	//_nickToUserLookup.insert(std::make_pair(user->GetNick(), user));
 }
@@ -231,7 +231,15 @@ int	Server::init()
 
 	initCmds();
 
-	_startupTimestamp = time(0);
+	char date_string[128];
+	time_t curr_time;
+	tm *curr_tm;
+	_startupTimestamp = std::time(&curr_time);
+	curr_tm = std::localtime(&curr_time);
+
+	std::strftime(date_string, 50, "%c", curr_tm);
+
+	_startupDateFormatted = date_string;
 
 	std::cout << "Server Ready on port " << _port << std::endl;
 

@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:47:18 by tnguyen-          #+#    #+#             */
-/*   Updated: 2023/01/16 15:05:58 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 10:33:21 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ protected:
 	int									_port;
 	std::string							_password;
 	time_t								_startupTimestamp;
+	std::string							_startupDateFormatted;
 	std::string							_servName;
 
 	/*
