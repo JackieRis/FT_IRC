@@ -6,16 +6,11 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 03:43:20 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/12 12:08:47 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 16:09:50 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include <cstdlib>
-#include <sys/socket.h> // For socket functions
-#include <netinet/in.h> // For sockaddr_in
-#include <iostream> // For cout
-#include <unistd.h> // For read
 
 int	main(int argc, char **argv)
 {

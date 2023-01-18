@@ -6,7 +6,7 @@
 #    By: aberneli <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/03/28 09:00:43 by aberneli          #+#    #+#              #
-#    Updated: 2022/12/12 10:18:07 by aberneli         ###   ########.fr        #
+#    Updated: 2023/01/18 16:11:56 by aberneli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,16 +21,14 @@ HEADER = Server.hpp User.hpp Channels.hpp \
 
 NAME = ircserv
 
-MAKEFILEV = Makefile
-
-FLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g3
+FLAGS = -Wall -Wextra -Werror -std=c++98
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(HEADER) $(MAKEFILEV)
+$(NAME): $(OBJ) $(HEADER)
 	c++ $(FLAGS) -o $(NAME) $(OBJ)
 
-%.o: %.cpp $(HEADER) $(MAKEFILEV)
+%.o: %.cpp $(HEADER)
 	c++ $(FLAGS) -c $< -o $@
 
 clean:

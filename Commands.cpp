@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/18 10:14:09 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 16:09:35 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ void Server::cmdPass(const std::vector<std::string>& input, int fd) /* must add 
 	SocketIo	*io = _io[fd];
 	
 	_cmdsCalled["PASS"]++;
-	if (_user[fd]->GetRegistered() == true)
+	if (_user[fd]->GetRegistered())
 	{
 		Rep::E462(NR_IN);
 		return ;
@@ -354,7 +354,7 @@ void	Server::cmdPrivmsg(const std::vector<std::string>& input, int fd)
 	{
 		std::cout << *it << std::endl;
 		std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
-		if (!(Utils::IsChannel(*it) == false || Sit == _channel.end()))
+		if (!(!Utils::IsChannel(*it) || Sit == _channel.end()))
 		{
 			if (Sit->second->GetModes() & CM_NOEXTERNAL && !Sit->second->HasUser(user))
 			{
@@ -412,7 +412,7 @@ void	Server::cmdNotice(const std::vector<std::string>& input, int fd)
 	{
 		std::cout << *it << std::endl;
 		std::map<std::string, Channels *>::iterator	Sit = _channel.find(*it);
-		if (!(Utils::IsChannel(*it) == false || Sit == _channel.end()))
+		if (!(!Utils::IsChannel(*it) || Sit == _channel.end()))
 		{	
 			if (Sit->second->GetModes() & CM_NOEXTERNAL && !Sit->second->HasUser(user))
 				continue ;

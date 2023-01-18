@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/26 10:48:58 by tnguyen-          #+#    #+#             */
-/*   Updated: 2023/01/18 10:36:47 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 16:11:23 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void Server::removeAllChannels(bool emptyOnly)
 
 	for (it = _channel.begin(); it != _channel.end(); )
 	{
-		if (!emptyOnly || (emptyOnly && (it->second->GetSize() == 0)))
+		if (!emptyOnly || it->second->GetSize() == 0)
 		{
 			delete it->second;
 			_channel.erase(it++);

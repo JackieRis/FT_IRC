@@ -6,13 +6,12 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/08 13:42:24 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/05 21:11:08 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 16:10:07 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "SocketIo.hpp"
 
-#include <iostream>
 # include <sys/errno.h>
 
 SocketIo::SocketIo(int newFd) : os(), is(), fd(newFd)
