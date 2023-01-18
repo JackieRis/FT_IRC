@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 22:59:27 by tnguyen-          #+#    #+#             */
-/*   Updated: 2022/12/12 16:51:07 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 10:00:19 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ public:
 
 	const std::string& GetNick() const;
 	const std::string& GetName() const;
+	const std::string& GetRealName() const;
 	int		GetFd() const;
 	bool	GetPass() const;
 	bool	GetRegistered() const;

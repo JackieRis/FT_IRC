@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 05:14:00 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/16 15:24:38 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 10:14:09 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -727,12 +727,95 @@ void	Server::cmdWho(const std::vector<std::string>& input, int fd)
 		Rep::E451(NR_IN);
 		return ;
 	}
+	
+	bool opOnly = (input.size() >= 3 && input[2] == "o");
+
 	if (input.size() < 2 || input[1] == "0") /* Both have the same behavior */
 	{
-		Rep::R315(NR_IN);
+		for (std::map<int, User *>::iterator it = _user.begin(); it != _user.end(); ++it)
+		{
+			User *other = it->second;
+			std::map<std::string, Channels *>::iterator cit = _channel.begin();
+			bool visible = (other == user); // user can see themselves
+			
+			if (opOnly && !(other->GetMode() & UM_OPER))
+				continue ;
+			if (other->GetMode() & UM_INVISIBLE && !visible)
+			{
+				for (; cit != _channel.end(); ++cit)
+				{
+					if (cit->second->HasBothUser(user, other))
+					{
+						visible = true;
+						break ;
+					}
+				}
+			}
+			if (!visible)
+				continue ;
+
+			std::stringstream sstr;
+
+			if (cit == _channel.end())
+				sstr << "* ";
+			else
+				sstr << cit->second->GetName() << " ";
+			sstr << other->GetName() << " * * " << other->GetNick() << "H";
+			if (other->GetMode() & UM_OPER)
+				sstr << "*";
+			if (cit != _channel.end() && cit->second->GetUserPrefix(other) != 'u')
+				sstr << cit->second->GetUserPrefix(other);
+			sstr << " :0 " << other->GetRealName();
+
+			Rep::R352(NR_IN, sstr.str());
+		}
+		Rep::R315(NR_IN, "0");
 		return ;
 	}
-	Rep::R315(NR_IN);
+	
+	if (!_nickToUserLookup.count(input[1]))
+	{
+			Rep::R315(NR_IN, input[1]);
+			return ;
+	}
+	
+	User *other = _nickToUserLookup[input[1]];
+
+	if (opOnly && !(other->GetMode() & UM_OPER))
+	{
+		Rep::R315(NR_IN, input[1]);
+		return ;
+	}
+
+	bool visible = (other == user);
+	if (other->GetMode() & UM_INVISIBLE && !visible)
+	{
+		std::map<std::string, Channels *>::iterator cit = _channel.begin();
+		for (; cit != _channel.end(); ++cit)
+		{
+			if (cit->second->HasBothUser(user, other))
+			{
+				visible = true;
+				break ;
+			}
+		}
+	}
+	if (!visible)
+	{
+		Rep::R315(NR_IN, input[1]);
+		return ;
+	}
+
+	std::stringstream sstr;
+
+	sstr << "* ";
+	sstr << other->GetName() << " * * " << other->GetNick() << "H";
+	if (other->GetMode() & UM_OPER)
+		sstr << "*";
+	sstr << " :0 " << other->GetRealName();
+
+	Rep::R352(NR_IN, sstr.str());
+	Rep::R315(NR_IN, input[1]);
 }
 
 void	Server::cmdWhois(const std::vector<std::string>& input, int fd)
@@ -762,7 +845,7 @@ void	Server::cmdWhois(const std::vector<std::string>& input, int fd)
 		
 		User *queryed = _nickToUserLookup[*lit];
 		
-		Rep::R311(NR_IN, queryed->GetNick(), queryed->GetName(), queryed->GetNick()); /* last one *should* be realname, oops */
+		Rep::R311(NR_IN, queryed->GetNick(), queryed->GetName(), queryed->GetRealName());
 		if (queryed->IsServerOpper())
 			Rep::R313(NR_IN, queryed->GetNick());
 		std::map<std::string, Channels *>::iterator cit = _channel.begin();

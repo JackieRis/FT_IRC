@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:49:09 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/16 10:55:48 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 09:28:19 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ class Channels
 	int								GetModes() const;
 	int								GetVisibleUsers(User *user) const;
 	bool							HasUser(User *user) const;
+	bool							HasBothUser(User *u1, User *u2) const;
 	bool							HasUser(const std::string& user) const;
 	bool							IsBanned(User *user) const;
 	bool							IsOpped(User *user) const;

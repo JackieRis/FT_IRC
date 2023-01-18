@@ -117,9 +117,9 @@ void Rep::R313(SocketIo& io, const std::string& cNick, const std::string& queryN
 	io.Send();
 }
 
-void Rep::R315(SocketIo& io, const std::string& cNick)
+void Rep::R315(SocketIo& io, const std::string& cNick, const std::string& name)
 {
-	io << "315 " << cNick << " :End of Who query";
+	io << "315 " << cNick << " " << name << " :End of Who query";
 	io.Send();
 }
 
@@ -180,9 +180,9 @@ void Rep::R341(SocketIo& io, const std::string& cNick, const std::string& otherN
 	io.Send();
 }
 
-void Rep::R352(SocketIo& io, const std::string& cNick)
+void Rep::R352(SocketIo& io, const std::string& cNick, const std::string& message)
 {
-	io << "352 " << cNick << " :End of Who query";
+	io << "352 " << cNick << " " << message;
 	io.Send();
 }
 

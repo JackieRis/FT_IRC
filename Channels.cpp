@@ -6,7 +6,7 @@
 /*   By: aberneli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/27 23:59:51 by aberneli          #+#    #+#             */
-/*   Updated: 2023/01/16 13:45:02 by aberneli         ###   ########.fr       */
+/*   Updated: 2023/01/18 09:29:32 by aberneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,11 @@ int		Channels::GetVisibleUsers(User *user) const
 bool	Channels::HasUser(User *user) const
 {
 	return (users.find(user) != users.end());
+}
+
+bool	Channels::HasBothUser(User *u1, User *u2) const
+{
+	return (HasUser(u1) && HasUser(u2));
 }
 
 bool	Channels::HasUser(const std::string& user) const
