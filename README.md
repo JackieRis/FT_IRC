@@ -1,22 +1,12 @@
 # FT_IRC
 
-## Server configuration:
+## Server configuration
 
-[Website wich helped me](https://ncona.com/2019/04/building-a-simple-server-with-cpp/)
+### ```MAKE```
 
-### ```int	socket(int domain, int type, int protocol);```
+First execute **make** to compile the project
 
-We'll use the **socket** function to create a socket. A socket can be seen as a file
-descriptor that can be used for communication.
-
-> **"domain"** refers to the protocol the socket will use for communication
-here we use IPv4 Internet protocols, so we need **AF_INET** arg.
-
-> **"type"** specifies if the communication will be connectionless or persistent
-not all ***types*** are compatible with all ***domains***.
-
-> Normally there is only one **protocol** available for eache **type**,
-so the value **0** can be used.
+image.png
 
 ### ```int	bind(int sockfd, const sockaddr *addr, socklen_t addrlen);```
 
